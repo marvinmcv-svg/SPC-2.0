@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SERVICES } from "@/lib/spc";
 import { WhatsAppButton } from "./whatsapp-button";
+import { useRouter } from "./site-router";
 import { cn } from "@/lib/utils";
 
 const N = SERVICES.length;
@@ -28,6 +29,12 @@ export function ServicesCarousel() {
   const stageRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ x: number; t: number } | null>(null);
   const reduce = useReducedMotion();
+  const router = useRouter();
+
+  function openService(id: string) {
+    router.navigate({ name: "service", id });
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
 
   const go = useCallback((dir: 1 | -1) => {
     setActive((a) => (a + dir + N) % N);
@@ -119,7 +126,10 @@ export function ServicesCarousel() {
                 key={s.id}
                 aria-hidden={!front}
                 aria-label={`${s.title} (${i + 1} de ${N})`}
-                className="gloss-card gloss-dark absolute left-1/2 top-1/2 overflow-hidden rounded-[24px]"
+                className={cn(
+                  "gloss-card gloss-dark absolute left-1/2 top-1/2 overflow-hidden rounded-[24px]",
+                  front && "cursor-pointer"
+                )}
                 style={{
                   width: dims.card,
                   height: dims.card * 0.78,
@@ -135,6 +145,7 @@ export function ServicesCarousel() {
                   pointerEvents: front ? "auto" : "none",
                   willChange: "transform",
                 }}
+                onClick={() => front && openService(s.id)}
               >
                 <div className="relative h-full w-full">
                   <Image
@@ -205,12 +216,13 @@ export function ServicesCarousel() {
               <WhatsAppButton message={service.message} size="sm">
                 Cotizar {service.title.toLowerCase()}
               </WhatsAppButton>
-              <a
-                href="#productos"
+              <button
+                type="button"
+                onClick={() => openService(service.id)}
                 className="btn-press inline-flex h-10 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] px-5 text-[13px] font-semibold text-white/85 backdrop-blur-md transition-all duration-300 hover:border-white/40 hover:bg-white/[0.14] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60"
               >
-                Ver los 9 servicios
-              </a>
+                Ver página del servicio →
+              </button>
             </div>
           </motion.div>
         </AnimatePresence>

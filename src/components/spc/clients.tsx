@@ -1,103 +1,62 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Star, Quote, MapPin } from "lucide-react";
 import { TiltCard } from "./tilt-card";
 import { Reveal, StaggerGroup, StaggerItem } from "./reveal";
-import { CLIENTS, REVIEWS, waLink, WA_MESSAGES } from "@/lib/spc";
+import { CLIENTS, REVIEWS, waLink, WA_MESSAGES, type Client } from "@/lib/spc";
 import { WhatsAppIcon } from "./whatsapp-button";
+import { cn } from "@/lib/utils";
 
-/* ——— Monograma SVG estilizado por cliente ——— */
-function ClientMark({ client }: { client: (typeof CLIENTS)[number] }) {
-  const { mark, style, color, name } = client;
-  const id = `cl-${client.id}`;
-
-  if (style === "text") {
-    // Marca tipo wordmark en minúsculas (entel, tigo)
-    return (
-      <span className="flex items-center gap-2.5" title={name}>
-        <span
-          className="text-[19px] font-extrabold lowercase italic leading-none tracking-tight"
-          style={{ color }}
-        >
-          {mark}
-        </span>
-        <span className="hidden text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[#57678A] sm:inline">
-          {client.sector}
-        </span>
-      </span>
-    );
-  }
-
-  const isShield = style === "shield";
-  const isCircle = style === "circle";
-
+/* ——— Logotipo real del cliente (png / jpg / svg) ——— */
+function ClientLogo({ client }: { client: Client }) {
+  const wide = ["entel", "deber", "inti"].includes(client.id);
   return (
-    <span className="flex items-center gap-2.5" title={name}>
-      <svg
-        viewBox="0 0 44 44"
-        className="h-10 w-10 shrink-0"
-        role="img"
-        aria-label={`Logotipo de ${name}`}
-      >
-        <defs>
-          <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.92" />
-            <stop offset="100%" stopColor={color} />
-          </linearGradient>
-        </defs>
-        {isShield ? (
-          <path
-            d="M22 2 40 8v14c0 10.5-7.8 17.6-18 20C11.8 39.6 4 32.5 4 22V8L22 2z"
-            fill={`url(#${id})`}
-          />
-        ) : isCircle ? (
-          <circle cx="22" cy="22" r="20" fill={`url(#${id})`} />
-        ) : (
-          <rect x="3" y="3" width="38" height="38" rx="9" fill={`url(#${id})`} />
+    <span
+      className="flex h-full w-full items-center justify-center px-5"
+      title={`${client.name} · ${client.sector}`}
+    >
+      <Image
+        src={client.logo}
+        alt={`Logotipo de ${client.name}`}
+        width={wide ? 150 : 92}
+        height={wide ? 46 : 92}
+        sizes="(max-width: 640px) 130px, 160px"
+        className={cn(
+          "w-auto object-contain transition-all duration-500",
+          wide ? "max-h-[46px]" : client.chip ? "max-h-[64px] rounded-xl" : "max-h-[64px]"
         )}
-        <text
-          x="22"
-          y="22"
-          textAnchor="middle"
-          dominantBaseline="central"
-          fill="#ffffff"
-          fontSize={mark.length > 3 ? 11 : mark.length > 2 ? 13 : 16}
-          fontWeight="800"
-          fontFamily="var(--font-inter), system-ui, sans-serif"
-          letterSpacing="0.5"
-        >
-          {mark}
-        </text>
-      </svg>
-      <span className="hidden text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[#57678A] sm:inline">
-        {client.sector}
-      </span>
+        style={{ width: "auto", height: "auto", maxWidth: wide ? 150 : 92, maxHeight: wide ? 46 : 64 }}
+        unoptimized={client.logo.endsWith(".svg")}
+      />
     </span>
   );
 }
 
 /** Tile de logo: gris elegante → color de marca al pasar el cursor */
-function LogoTile({ client }: { client: (typeof CLIENTS)[number] }) {
+function LogoTile({ client }: { client: Client }) {
   return (
-    <div className="gloss-card flex h-20 w-[250px] shrink-0 items-center justify-center px-6 transition-all duration-300 hover:-translate-y-1">
-      <span className="grayscale-[0.9] opacity-75 transition-all duration-300 hover:grayscale-0 hover:opacity-100 [&:hover]:grayscale-0">
-        <ClientMark client={client} />
+    <motion.div
+      className="gloss-card flex h-[86px] w-[250px] shrink-0 items-center justify-center"
+      whileHover={{ y: -4, scale: 1.03 }}
+      transition={{ type: "spring", stiffness: 260, damping: 18 }}
+    >
+      <span className="grayscale-[0.85] opacity-70 transition-all duration-500 hover:grayscale-0 hover:opacity-100 [&:hover]:grayscale-0">
+        <ClientLogo client={client} />
       </span>
-    </div>
+    </motion.div>
   );
 }
 
 /** Fila de marquesina con la pared de logos */
-function LogoRow({ reverse = false }: { reverse?: boolean }) {
-  const half = Math.ceil(CLIENTS.length / 2);
-  const row = reverse ? CLIENTS.slice(half) : CLIENTS.slice(0, half);
-  const items = [...row, ...row];
+function LogoRow({ clients, reverse = false }: { clients: Client[]; reverse?: boolean }) {
+  const items = [...clients, ...clients];
   return (
-    <div className="scroll-fade-x relative overflow-hidden py-3">
+    <div className="scroll-fade-x relative overflow-hidden py-2.5">
       <div
         className="marquee-track flex w-max gap-4"
-        style={{ ["--marquee-d" as string]: reverse ? "44s" : "52s", animationDirection: reverse ? "reverse" : "normal" }}
+        style={{ ["--marquee-d" as string]: reverse ? "46s" : "56s", animationDirection: reverse ? "reverse" : "normal" }}
       >
         {items.map((c, i) => (
           <LogoTile key={`${c.id}-${i}`} client={c} />
@@ -122,9 +81,13 @@ function Stars({ n }: { n: number }) {
 }
 
 /**
- * Clientes nacionales — pared de logos + reseñas.
+ * Clientes nacionales — pared de logotipos reales + reseñas.
  */
 export function Clients() {
+  const half = Math.ceil(CLIENTS.length / 2);
+  const rowA = CLIENTS.slice(0, half);
+  const rowB = CLIENTS.slice(half);
+
   return (
     <section
       id="clientes"
@@ -155,11 +118,11 @@ export function Clients() {
           </Reveal>
         </div>
 
-        {/* Pared de logos en doble marquesina */}
+        {/* Pared de logos reales en doble marquesina */}
         <Reveal delay={0.1}>
           <div className="mt-12 rounded-[28px] border border-white/60 bg-white/45 p-4 shadow-[0_20px_50px_-24px_rgba(10,20,40,0.15)] backdrop-blur-xl sm:p-6">
-            <LogoRow />
-            <LogoRow reverse />
+            <LogoRow clients={rowA} />
+            <LogoRow clients={rowB} reverse />
             <p className="mt-1 text-center text-[11.5px] font-medium text-[#8A94A6]">
               Una selección de empresas e instituciones de los sectores que atendemos en todo el país
             </p>

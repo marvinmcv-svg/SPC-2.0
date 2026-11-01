@@ -1,88 +1,79 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, MessageCircleHeart } from "lucide-react";
 import { Reveal } from "./reveal";
-import { WhatsAppButton, WhatsAppIcon } from "./whatsapp-button";
-import { SPC, WA_MESSAGES } from "@/lib/spc";
+import { QuoteForm } from "./quote-form";
+import { SPC } from "@/lib/spc";
 
-/** CTA final — el embudo converge en WhatsApp */
+/** CTA final — cotizador con vista previa de WhatsApp (el embudo converge aquí) */
 export function FinalCta() {
   const reduce = useReducedMotion();
 
   return (
     <section id="contacto" className="grain relative overflow-hidden bg-[#0A1428] py-24 sm:py-32">
-      {/* Fondo premium: glow azul + retícula de marcas de registro */}
-      <div className="absolute inset-0 bg-[radial-gradient(90%_70%_at_50%_-10%,rgba(63,108,192,0.35),transparent_60%)]" />
+      {/* Fondo premium: glow azul + viñeta */}
+      <div className="absolute inset-0 bg-[radial-gradient(90%_60%_at_18%_-10%,rgba(63,108,192,0.32),transparent_58%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_120%,rgba(17,9,91,0.8),transparent_55%)]" />
-
       {/* marcas de registro decorativas */}
-      <svg className="absolute left-[6%] top-[14%] hidden h-9 w-9 text-white/12 lg:block" viewBox="0 0 40 40" fill="none" aria-hidden>
+      <svg className="absolute left-[5%] top-[10%] hidden h-9 w-9 text-white/10 lg:block" viewBox="0 0 40 40" fill="none" aria-hidden>
         <circle cx="20" cy="20" r="12" stroke="currentColor" strokeWidth="1.4" />
         <path d="M20 2v36M2 20h36" stroke="currentColor" strokeWidth="1.4" />
       </svg>
-      <svg className="absolute bottom-[16%] right-[7%] hidden h-12 w-12 text-white/12 lg:block" viewBox="0 0 40 40" fill="none" aria-hidden>
+      <svg className="absolute bottom-[14%] right-[6%] hidden h-12 w-12 text-white/10 lg:block" viewBox="0 0 40 40" fill="none" aria-hidden>
         <circle cx="20" cy="20" r="12" stroke="currentColor" strokeWidth="1.4" />
         <path d="M20 2v36M2 20h36" stroke="currentColor" strokeWidth="1.4" />
       </svg>
 
-      <div className="relative mx-auto flex max-w-4xl flex-col items-center px-5 text-center sm:px-8">
-        <Reveal>
-          <span className="inline-flex items-center gap-2.5 rounded-full border border-[#25D366]/30 bg-[#25D366]/10 px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#4BE38A] backdrop-blur-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#25D366] opacity-70" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#25D366]" />
+      <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
+        <div className="mx-auto mb-14 flex max-w-3xl flex-col items-center text-center">
+          <Reveal>
+            <span className="inline-flex items-center gap-2.5 rounded-full border border-[#25D366]/30 bg-[#25D366]/10 px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#4BE38A] backdrop-blur-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#25D366] opacity-70" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#25D366]" />
+              </span>
+              Estamos en línea ahora
             </span>
-            Estamos en línea ahora
-          </span>
-        </Reveal>
+          </Reveal>
 
-        <Reveal delay={0.1}>
-          <h2 className="display-tight mt-7 text-balance text-4xl font-extrabold text-white sm:text-6xl lg:text-[4.2rem]">
-            Tu próximo proyecto{" "}
-            <span className="font-serif font-normal italic text-silver">empieza con un</span>{" "}
-            <span className="text-glow-blue text-[#7FA8EC]">“Hola”</span>
-          </h2>
-        </Reveal>
+          <Reveal delay={0.1}>
+            <h2 className="display-tight mt-7 text-balance text-4xl font-extrabold text-white sm:text-5xl lg:text-[3.6rem]">
+              Arma tu cotización{" "}
+              <span className="font-serif font-normal italic text-silver">en 30 segundos</span>{" "}
+              <span className="text-glow-blue text-[#7FA8EC]">— y envíala por WhatsApp</span>
+            </h2>
+          </Reveal>
 
-        <Reveal delay={0.18}>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-white/65">
-            Cuéntanos qué necesitas imprimir y recibe una cotización clara, con asesoría experta y
-            la calidad de los líderes de la industria gráfica en Bolivia. Sin compromiso.
-          </p>
-        </Reveal>
+          <Reveal delay={0.18}>
+            <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-white/60">
+              Elige el producto, define la cantidad y mira cómo se arma tu mensaje en vivo.
+              Un asesor experto te responde con la cotización — normalmente en minutos.
+            </p>
+          </Reveal>
 
-        {/* Botón gigante de WhatsApp */}
-        <Reveal delay={0.26}>
-          <div className="relative mt-11">
-            {!reduce && (
-              <motion.div
-                aria-hidden
-                className="absolute inset-0 -z-10 rounded-full bg-[#25D366]/40 blur-[46px]"
-                animate={{ opacity: [0.5, 0.95, 0.5], scale: [0.96, 1.04, 0.96] }}
-                transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-              />
-            )}
-            <WhatsAppButton
-              message={WA_MESSAGES.start}
-              size="lg"
-              className="h-16 px-10 text-lg sm:h-[68px] sm:px-12 sm:text-xl"
+          <Reveal delay={0.24}>
+            <motion.p
+              className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[13px] font-medium text-white/45"
+              animate={reduce ? undefined : { opacity: [0.55, 1, 0.55] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             >
-              <WhatsAppIcon className="h-7 w-7" />
-              Escribir por WhatsApp
-            </WhatsAppButton>
-          </div>
-        </Reveal>
+              <span className="inline-flex items-center gap-1.5">
+                <MessageCircleHeart className="h-3.5 w-3.5 text-[#4BE38A]" />
+                {SPC.whatsapp.display} · WhatsApp Business
+              </span>
+              <span className="hidden h-1 w-1 rounded-full bg-white/25 sm:block" aria-hidden />
+              <span>Lun a Vie 8:00–18:00 · entrega a los 9 departamentos</span>
+            </motion.p>
+          </Reveal>
+        </div>
 
-        <Reveal delay={0.34}>
-          <p className="mt-5 text-[13.5px] font-medium text-white/50">
-            Respuesta típica en minutos · Lun a Vie 8:00–18:00
-          </p>
-        </Reveal>
+        {/* Formulario + vista previa en vivo */}
+        <QuoteForm />
 
         {/* Datos de contacto */}
-        <Reveal delay={0.4}>
-          <div className="mt-14 grid w-full gap-4 sm:grid-cols-3">
+        <Reveal delay={0.2}>
+          <div className="mt-16 grid w-full gap-4 sm:grid-cols-3">
             {[
               { icon: Phone, label: "Teléfonos", value: `${SPC.phone} · ${SPC.phoneAlt}` },
               { icon: Mail, label: "Correo", value: SPC.email },

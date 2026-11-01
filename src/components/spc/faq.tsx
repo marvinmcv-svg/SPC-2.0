@@ -14,7 +14,7 @@ import { WhatsAppButton } from "./whatsapp-button";
 import { WA_MESSAGES, FAQS } from "@/lib/spc";
 
 /**
- * FAQ educativa + promo de SPC AI (recepcionista virtual).
+ * FAQ educativa + promo de SPenCer (recepcionista virtual con IA).
  */
 export function Faq() {
   return (
@@ -80,7 +80,7 @@ export function Faq() {
                 whileHover={{ y: -3 }}
                 transition={{ type: "spring", stiffness: 260, damping: 22 }}
                 className="gloss-card group relative w-full overflow-hidden rounded-[28px] p-8 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#27519B]/60"
-                aria-label="Abrir chat de SPC AI, la recepcionista virtual"
+                aria-label="Abrir chat de SPenCer, la recepcionista virtual con IA"
               >
                 {/* halo animado */}
                 <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#3F6CC0]/[0.14] blur-[50px] transition-opacity duration-500 group-hover:opacity-100" />
@@ -97,18 +97,18 @@ export function Faq() {
                   </span>
                   <div>
                     <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#3F6CC0]">
-                      Recepcionista virtual
+                      Recepcionista virtual con IA
                     </p>
                     <h3 className="display-tight mt-1.5 text-[1.7rem] font-extrabold tracking-tight text-[#0C1526]">
-                      Conoce a <span className="text-silver-blue">SPC AI</span>
+                      Conoce a <span className="text-silver-blue">SPenCer</span>
                     </h3>
                     <p className="mt-2.5 text-pretty text-[14px] leading-relaxed text-[#57678A]">
-                      Nuestra asistente con inteligencia artificial responde al instante todas tus
-                      dudas: tirajes, plazos, materiales, precios orientativos y cómo cotizar.
-                      Disponible 24/7, en tu idioma.
+                      SPenCer te guía de la idea a la cotización: responde al instante tus dudas de
+                      tirajes, plazos, materiales y precios orientativos — y cuando estás listo,
+                      te conecta por WhatsApp con un asesor. Disponible 24/7.
                     </p>
                     <span className="btn-press mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-gradient-to-r from-[#3F6CC0] to-[#27519B] px-5 text-[14px] font-semibold text-white shadow-[0_12px_26px_-10px_rgba(39,81,155,0.65)]">
-                      Chatear con SPC AI
+                      Chatear con SPenCer
                       <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                     </span>
                   </div>

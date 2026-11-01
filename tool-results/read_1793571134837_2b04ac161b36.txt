@@ -1,0 +1,659 @@
+     1→/**
+     2→ * SPC Impresores S.A. — Central brand configuration
+     3→ * Single source of truth for contact info, WhatsApp funnel, product data,
+     4→ * clients, reviews, FAQs and the SPC AI knowledge base.
+     5→ *
+     6→ * ⚙️ Para cambiar el número de WhatsApp, edita SOLO `whatsapp.number` aquí.
+     7→ * ⚙️ Para actualizar clientes/reseñas reales, edita CLIENTS / REVIEWS aquí.
+     8→ */
+     9→export const SPC = {
+    10→  name: "SPC Impresores S.A.",
+    11→  brand: "SPC Gráfica Industrial",
+    12→  slogan: "Imprimiendo lo mejor de Bolivia",
+    13→  founded: 2001,
+    14→  city: "La Paz, Bolivia",
+    15→  address: "Av. Las Américas Nº 756, La Paz – Bolivia",
+    16→  phone: "(+591) 2 2111121",
+    17→  phoneAlt: "(+591) 2 2248260",
+    18→  email: "grafcaindustrial@spc.com.bo",
+    19→  webToPrintUrl: "https://spc.net.bo/wtp2/client/index.php",
+    20→  website: "https://www.spc.net.bo",
+    21→  mission:
+    22→    "Brindamos servicios integrales en impresión comercial y packaging, orientados a las necesidades de nuestros clientes.",
+    23→  vision:
+    24→    "Fortalecer el liderazgo en el mercado de la industria gráfica, consolidando al sector y promoviendo solo lo mejor.",
+    25→  whatsapp: {
+    26→    /** Número de WhatsApp Business en formato internacional sin “+”.  */
+    27→    number: "5912211121",
+    28→    displayName: "SPC Impresores S.A.",
+    29→  },
+    30→} as const;
+    31→
+    32→/** Construye un enlace wa.me con mensaje precargado (funnel de CTA). */
+    33→export function waLink(message: string): string {
+    34→  return `https://wa.me/${SPC.whatsapp.number}?text=${encodeURIComponent(message)}`;
+    35→}
+    36→
+    37→/** Mensajes precargados por contexto (educan y guían al CTA). */
+    38→export const WA_MESSAGES = {
+    39→  general:
+    40→    "Hola SPC 👋 Quiero información sobre sus servicios de impresión y packaging.",
+    41→  packaging:
+    42→    "Hola SPC 👋 Quiero cotizar *packaging*: cajas, bolsas o envases para mi producto.",
+    43→  alimentos:
+    44→    "Hola SPC 👋 Necesito cotizar *packaging para alimentos* (cajas, envolturas, etiquetas).",
+    45→  farmaceutico:
+    46→    "Hola SPC 👋 Necesito cotizar *packaging farmacéutico* con estándares de la industria.",
+    47→  comercial:
+    48→    "Hola SPC 👋 Quiero cotizar *impresión comercial*: revistas, catálogos o impresos.",
+    49→  digital:
+    50→    "Hola SPC 👋 Me interesa la *impresión digital bajo demanda* para tirajes cortos.",
+    51→  books:
+    52→    "Hola SPC 👋 Quiero cotizar *libros emblocados* (Hotmelt/PUR) o publicaciones.",
+    53→  start:
+    54→    "Hola SPC 👋 Quiero iniciar un proyecto de impresión. ¿Me ayudan con una cotización?",
+    55→  brief:
+    56→    "Hola SPC 👋 Quiero una cotización. Mi proyecto:\n• Producto: \n• Cantidad: \n• Tamaño: \n• Material/acabado: \n• ¿Tengo diseño?: ",
+    57→  webToPrint:
+    58→    "Hola SPC 👋 Quiero información sobre el *portal Web to Print* para mi empresa.",
+    59→} as const;
+    60→
+    61→/* ————————————————————————————————————————————————
+    62→   Las 9 líneas de producto de SPC (datos reales de su catálogo)
+    63→   + información profunda para las páginas de detalle
+    64→———————————————————————————————————————————————— */
+    65→export type ServiceCategory = "packaging" | "comercial" | "digital";
+    66→
+    67→export interface ServiceDetails {
+    68→  /** Párrafo educativo: qué es y para qué sirve este producto */
+    69→  intro: string;
+    70→  materials: string[];
+    71→  finishes: string[];
+    72→  specs: { label: string; value: string }[];
+    73→  useCases: string[];
+    74→  /** Consejo educativo de experto */
+    75→  tip: string;
+    76→}
+    77→
+    78→export interface Service {
+    79→  id: string;
+    80→  title: string;
+    81→  description: string;
+    82→  image: string;
+    83→  category: ServiceCategory;
+    84→  categoryLabel: string;
+    85→  highlights: string[];
+    86→  message: string;
+    87→  details: ServiceDetails;
+    88→}
+    89→
+    90→export const SERVICES: Service[] = [
+    91→  {
+    92→    id: "packaging-alimentos",
+    93→    title: "Packaging de Alimentos",
+    94→    description:
+    95→      "Envases y cajas food-grade que protegen tu producto y elevan tu marca en góndola.",
+    96→    image: "/spc/packaging-alimentos.jpg",
+    97→    category: "packaging",
+    98→    categoryLabel: "Packaging",
+    99→    highlights: ["Cartón food-grade", "Impresión offset premium", "Bordes y troquel fino"],
+   100→    message: WA_MESSAGES.alimentos,
+   101→    details: {
+   102→      intro:
+   103→        "El packaging de alimentos hace doble trabajo: protege el producto durante el transporte y almacenamiento, y lo vende en el punto de venta. Trabajamos con cartón e insumos aptos para contacto con alimentos e impresión de baja migración, para que tu marca cumpla los estándares del sector sin sacrificar el impacto visual en góndola.",
+   104→      materials: [
+   105→        "Cartón plegadizo food-grade de 18 a 24 ptos",
+   106→        "Cartón microcorrugado (E / B) para producto pesado",
+   107→        "Papeles barrera y encerados",
+   108→      ],
+   109→      finishes: [
+   110→        "Barniz acuático apto para alimentos",
+   111→        "Laminación mate o brillante",
+   112→        "Barniz UV y UV selectivo",
+   113→        "Troquel y hendido de precisión",
+   114→      ],
+   115→      specs: [
+   116→        { label: "Tiraje recomendado", value: "Offset desde ≈ 1.000 uds · digital desde 100" },
+   117→        { label: "Tiempo de entrega", value: "8 a 15 días hábiles según acabados" },
+   118→        { label: "Color", value: "CMYK + tintas Pantone para color de marca exacto" },
+   119→        { label: "Formato", value: "Cajas plegadizas, sleeves, bandejas y envolturas" },
+   120→      ],
+   121→      useCases: [
+   122→        "Estuches para snacks, chocolates y repostería",
+   123→        "Bandejas y cajas para panadería y pastelería",
+   124→        "Sleeves para productos promocionales",
+   125→        "Cajas para productos congelados y listos para servir",
+   126→      ],
+   127→      tip: "Define el packaging junto al tamaño real de tu producto: reducir 5 mm el desarrollo puede bajar el costo de material por unidad sin perder presencia en góndola.",
+   128→    },
+   129→  },
+   130→  {
+   131→    id: "packaging-farmaceutico",
+   132→    title: "Packaging Farmacéutico",
+   133→    description:
+   134→      "Cajas y estuches con la precisión, trazabilidad y estándares que exige la industria.",
+   135→    image: "/spc/packaging-farmaceutico.jpg",
+   136→    category: "packaging",
+   137→    categoryLabel: "Packaging",
+   138→    highlights: ["Precisión farmacéutica", "Series y códigos", "Calidad certificada"],
+   139→    message: WA_MESSAGES.farmaceutico,
+   140→    details: {
+   141→      intro:
+   142→        "En la industria farmacéutica el empaque es parte del producto: debe garantizar información legible, trazabilidad lote a lote y acabados que soporten líneas de envase automatizadas. Nuestra producción combina impresión de alta definición, control de color estricto y verificación por series, para que cada estuche llegue listo para la línea de empaque.",
+   143→      materials: [
+   144→        "Cartón folding de baja migración",
+   145→        "Cartón blanco reversible para impresión doble cara",
+   146→        "Insertos y bandejas internas",
+   147→      ],
+   148→      finishes: [
+   149→        "Impresión de series, lotes y códigos",
+   150→        "Microtexto y elementos de seguridad",
+   151→        "Barniz mate tacto suave",
+   152→        "Troquel de alta precisión",
+   153→      ],
+   154→      specs: [
+   155→        { label: "Tiraje recomendado", value: "Series medias y altas (consultar por proyecto)" },
+   156→        { label: "Tiempo de entrega", value: "10 a 15 días hábiles con validación previa" },
+   157→        { label: "Trazabilidad", value: "Control por orden, lote y serie de producción" },
+   158→        { label: "Formato", value: "Estuches, insertos, prospectos y estuches para dispositivos" },
+   159→      ],
+   160→      useCases: [
+   161→        "Estuches para medicamentos de venta libre y bajo receta",
+   162→        "Cajas para dispositivos médicos",
+   163→        "Insertos informativos y prospectos",
+   164→        "Packaging para líneas hospitalarias",
+   165→      ],
+   166→      tip: "Envíanos la especificación técnica de tu línea de envase (velocidad, tipo de pegado, sensores) y calibramos el desarrollo del estuche para que corra sin detenciones.",
+   167→    },
+   168→  },
+   169→  {
+   170→    id: "packaging-comercial",
+   171→    title: "Packaging Comercial y Promocional",
+   172→    description:
+   173→      "Estuches rígidos, packaging promocional y presentaciones que enamoran al cliente.",
+   174→    image: "/spc/packaging-comercial.jpg",
+   175→    category: "packaging",
+   176→    categoryLabel: "Packaging",
+   177→    highlights: ["Estuches rígidos", "Acabados premium", "Laminación y UV"],
+   178→    message: WA_MESSAGES.packaging,
+   179→    details: {
+   180→      intro:
+   181→        "Cuando el producto se regala o se exhibe, el empaque es la primera experiencia de marca. Los estuches rígidos y acabados premium —laminación soft-touch, hot stamping, UV selectivo— transmiten valor antes de abrir la caja. Diseñamos presentaciones que convierten un producto en un regalo corporativo o de retail memorable.",
+   182→      materials: [
+   183→        "Cartón gris forrado (estuches rígidos)",
+   184→        "Cartulinas de alta blancura",
+   185→        "Papeles especiales y textiles",
+   186→      ],
+   187→      finishes: [
+   188→        "Forrado manual y semi-industrial",
+   189→        "Laminación soft-touch",
+   190→        "Hot stamping (oro, plata, colores)",
+   191→        "UV selectivo y relieve",
+   192→      ],
+   193→      specs: [
+   194→        { label: "Tiraje recomendado", value: "Piezas premium desde ≈ 250 uds" },
+   195→        { label: "Tiempo de entrega", value: "12 a 18 días hábiles según acabados" },
+   196→        { label: "Nivel", value: "Presentaciones de lujo, retail y corporativas" },
+   197→        { label: "Formato", value: "Estuches rígidos, cajas magnet, displays y kits" },
+   198→      ],
+   199→      useCases: [
+   200→        "Cajas premium para lanzamientos y ediciones especiales",
+   201→        "Kits de regalo corporativo",
+   202→        "Displays y exhibidores promocionales",
+   203→        "Cajas para joyería, cosmética y tecnología",
+   204→      ],
+   205→      tip: "Un UV selectivo sobre un logo mate puede resaltar más que un laminado completo — y cuesta menos de lo que imaginas.",
+   206→    },
+   207→  },
+   208→  {
+   209→    id: "paper-bags",
+   210→    title: "Paper Bags",
+   211→    description:
+   212→      "Bolsas de papel con asa, en todos los colores y tamaños, que convierten tu marca en experiencia.",
+   213→    image: "/spc/paper-bags.jpg",
+   214→    category: "packaging",
+   215→    categoryLabel: "Packaging",
+   216→    highlights: ["Asas resistentes", "Papeles de color", "Gran volumen"],
+   217→    message: WA_MESSAGES.packaging,
+   218→    details: {
+   219→      intro:
+   220→        "La bolsa de papel es publicidad ambulante: tu marca camina por la calle en manos de tus clientes. Producimos bolsas con asa resistente en kraft, couché y papeles de color, con impresión a una o varias tintas, para retail, eventos, delivery y campañas. Tamiza la resistencia correcta según el peso de tu producto.",
+   221→      materials: [
+   222→        "Papel kraft natural y blanco",
+   223→        "Couché de color (paleta completa)",
+   224→        "Papeles reciclados y texturizados",
+   225→      ],
+   226→      finishes: [
+   227→        "Asas de papel retorcido o cinta plana",
+   228→        "Fondo y refuerzos para peso extra",
+   229→        "Impresión 1 a 4 tintas + Pantone",
+   230→        "Barniz y laminación opcional",
+   231→      ],
+   232→      specs: [
+   233→        { label: "Tiraje recomendado", value: "Desde ≈ 500 bolsas por diseño" },
+   234→        { label: "Tiempo de entrega", value: "7 a 12 días hábiles" },
+   235→        { label: "Tamaños", value: "Pequeña, mediana, grande y formats de evento" },
+   236→        { label: "Asas", value: "Retorcida, plana o cordón textil" },
+   237→      ],
+   238→      useCases: [
+   239→        "Bolsas para tiendas de ropa y calzado",
+   240→        "Bolsas para eventos, ferias y lanzamientos",
+   241→        "Bolsas para delivery y repostería",
+   242→        "Kits de bienvenida corporativos",
+   243→      ],
+   244→      tip: "Un diseño a dos tintas sobre kraft natural comunica sostenibilidad y cuesta menos que una impresión llena a cuatro tintas.",
+   245→    },
+   246→  },
+   247→  {
+   248→    id: "impresos-comerciales",
+   249→    title: "Impresos Comerciales",
+   250→    description:
+   251→      "Papelería comercial e identidad corporativa con acabados impecables: hojas membretadas, tarjetas y más.",
+   252→    image: "/spc/impresos-comerciales.jpg",
+   253→    category: "comercial",
+   254→    categoryLabel: "Comercial",
+   255→    highlights: ["Identidad corporativa", "Papeles premium", "Definición de color"],
+   256→    message: WA_MESSAGES.comercial,
+   257→    details: {
+   258→      intro:
+   259→        "La papelería corporativa es el uniforme de tu marca en cada carta, carpeta y tarjeta que entregas. Con papeles de primera línea, color consistente y acabados profesionales, tu empresa se percibe sólida en cada punto de contacto físico — de la tarjeta de presentación al sobre de una propuesta millonaria.",
+   260→      materials: [
+   261→        "Papel bond de primera calidad",
+   262→        "Cartulinas y couchés premium",
+   263→        "Papeles con textura y algodón",
+   264→      ],
+   265→      finishes: [
+   266→        "Laminación mate, brillante y soft-touch",
+   267→        "Tarjetas con borde de color",
+   268→        "Impresión en seco (blind emboss)",
+   269→        "Numeración y perforados",
+   270→      ],
+   271→      specs: [
+   272→        { label: "Tiraje recomendado", value: "Digital desde 100 · offset desde ≈ 500" },
+   273→        { label: "Tiempo de entrega", value: "3 a 8 días hábiles" },
+   274→        { label: "Color", value: "Control de color para identidad consistente" },
+   275→        { label: "Formato", value: "Hojas membretadas, sobres, carpetas, tarjetas, blocks" },
+   276→      ],
+   277→      useCases: [
+   278→        "Kits de papelería corporativa completa",
+   279→        "Tarjetas de presentación premium",
+   280→        "Carpetas institucionales para propuestas",
+   281→        "Blocks, recibos y facturas personalizadas",
+   282→      ],
+   283→      tip: "Estandariza el papel de tu papelería una vez: el color de marca se mantiene idéntico en cada reposición durante años.",
+   284→    },
+   285→  },
+   286→  {
+   287→    id: "libros",
+   288→    title: "Libros Emblocados Hotmelt/PUR",
+   289→    description:
+   290→      "Encuadernación Hotmelt y PUR de alta resistencia para libros que duran generaciones.",
+   291→    image: "/spc/libros.jpg",
+   292→    category: "comercial",
+   293→    categoryLabel: "Comercial",
+   294→    highlights: ["Encuadernación PUR", "Lomos cuadrados", "Tirajes largos"],
+   295→    message: WA_MESSAGES.books,
+   296→    details: {
+   297→      intro:
+   298→        "Un libro bien encuadernado se abre plano, resiste cientos de lecturas y mantiene el lomo intacto en la biblioteca. Nuestra encuadernación Hotmelt y PUR —la tecnología de encolado más resistente de la industria— procesa tirajes largos con lomos cuadrados perfectos y tiempos consistentes para editoriales, universidades e instituciones.",
+   299→      materials: [
+   300→        "Papel interior 70–120 g (bond, book, offset)",
+   301→        "Cartulina para tapas 200–350 g",
+   302→        "Opciones de tapa blanda y forros",
+   303→      ],
+   304→      finishes: [
+   305→        "Encolado Hotmelt y PUR",
+   306→        "Lomo cuadrado o redondeado",
+   307→        "Cosido a hilo para libros de arte",
+   308→        "Laminación y UV en portadas",
+   309→      ],
+   310→      specs: [
+   311→        { label: "Tiraje recomendado", value: "Offset desde ≈ 300 ejemplares · digital desde 1" },
+   312→        { label: "Tiempo de entrega", value: "10 a 15 días hábiles por tiraje" },
+   313→        { label: "Encuadernación", value: "Hotmelt / PUR / cosido a caballete" },
+   314→        { label: "Formato", value: "Formatos de bolsillo a mesa de café" },
+   315→      ],
+   316→      useCases: [
+   317→        "Libros de editoriales y autores independientes",
+   318→        "Anuarios escolares y universitarios",
+   319→        "Memorias institucionales y corporativas",
+   320→        "Catálogos de arte y fotografía",
+   321→      ],
+   322→      tip: "PUR frente a Hotmelt: si tu libro se usará con frecuencia (manuales, textos de consulta), el encolado PUR duplica la vida útil del lomo.",
+   323→    },
+   324→  },
+   325→  {
+   326→    id: "revistas",
+   327→    title: "Revistas y Catálogos",
+   328→    description:
+   329→      "Publicaciones periódicas y catálogos con papel, color y encuadernación de primer nivel.",
+   330→    image: "/spc/revistas.jpg",
+   331→    category: "comercial",
+   332→    categoryLabel: "Comercial",
+   333→    highlights: ["Calidad editorial", "Cosido y encolado", "Distribución nacional"],
+   334→    message: WA_MESSAGES.comercial,
+   335→    details: {
+   336→      intro:
+   337→        "Una revista es una promesa de calidad que se renueva en cada número. Impresión editorial de gacetas, revistas y catálogos con selección de papel por secciones, color calibrado de tapa a tapa y encuadernación cosida o encolada. Programamos las periodicidades para que cada edición llegue a tiempo a tus lectores.",
+   338→      materials: [
+   339→        "Papel interior 80–115 g (couché mate/brillo)",
+   340→        "Portadas 200–300 g con laminación",
+   341→        "Insertos y cartelas en papel distinto",
+   342→      ],
+   343→      finishes: [
+   344→        "Cosido a caballete (grapas al lomo)",
+   345→        "Encolado Hotmelt para más páginas",
+   346→        "Barniz UV en portada",
+   347→        "Contratapas con datos de contacto",
+   348→      ],
+   349→      specs: [
+   350→        { label: "Tiraje recomendado", value: "Desde ≈ 300 ejemplares" },
+   351→        { label: "Tiempo de entrega", value: "7 a 12 días hábiles por edición" },
+   352→        { label: "Paginación", value: "Múltiplos según encuadernación elegida" },
+   353→        { label: "Formato", value: "Revistas, catálogos, gacetas y boletines" },
+   354→      ],
+   355→      useCases: [
+   356→        "Revistas corporativas e institucionales",
+   357→        "Catálogos de producto temporada tras temporada",
+   358→        "Publicaciones de cámaras y gremios",
+   359→        "Boletines y gacetas de distribución nacional",
+   360→      ],
+   361→      tip: "Programa tus ediciones con 3 semanas de anticipación: aseguras máquina, papel y entregas puntuales en cada periodo.",
+   362→    },
+   363→  },
+   364→  {
+   365→    id: "calendarios",
+   366→    title: "Calendarios",
+   367→    description:
+   368→      "Calendarios de escritorio y pared que ponen tu marca frente a tu cliente los 365 días del año.",
+   369→    image: "/spc/calendarios.jpg",
+   370→    category: "comercial",
+   371→    categoryLabel: "Comercial",
+   372→    highlights: ["Diseños personalizados", "Espiral y taco", "Campaña anual"],
+   373→    message: WA_MESSAGES.comercial,
+   374→    details: {
+   375→      intro:
+   376→        "El calendario es el impreso más visto del año: 365 días de tu marca en el escritorio o la pared del cliente. Personalizamos cada página —fotos, promociones, fechas clave de tu negocio— y producimos la campaña completa para que en diciembre tus calendarios ya estén en manos de tus clientes.",
+   377→      materials: [
+   378→        "Papel estucado para imágenes de alta calidad",
+   379→        "Cartulina para base y taco",
+   380→        "Soportes de cartón rígido",
+   381→      ],
+   382→      finishes: [
+   383→        "Espiral metálica o plástica",
+   384→        "Taco adhesivo para escritorio",
+   385→        "Laminación de portada",
+   386→        "Personalización página por página",
+   387→      ],
+   388→      specs: [
+   389→        { label: "Tiraje recomendado", value: "Desde ≈ 200 unidades por diseño" },
+   390→        { label: "Tiempo de entrega", value: "7 a 12 días hábiles" },
+   391→        { label: "Temporada", value: "Campaña anual — producción de junio a diciembre" },
+   392→        { label: "Formato", value: "Escritorio, pared, alargado y de bolsillo" },
+   393→      ],
+   394→      useCases: [
+   395→        "Calendarios corporativos de fin de año",
+   396→        "Calendarios promocionales con fotos de producto",
+   397→        "Almanaques institucionales",
+   398→        "Agendas y planeadores complementarios",
+   399→      ],
+   400→      tip: "Junio es el mes ideal para cerrar tu campaña navideña de calendarios: mejores precios y stock garantizado de papel.",
+   401→    },
+   402→  },
+   403→  {
+   404→    id: "impresion-digital",
+   405→    title: "Impresión Digital",
+   406→    description:
+   407→      "Impresión digital bajo demanda: tirajes cortos, entregas rápidas y personalización variable.",
+   408→    image: "/spc/impresion-digital.jpg",
+   409→    category: "digital",
+   410→    categoryLabel: "Digital",
+   411→    highlights: ["Bajo demanda", "Datos variables", "Entrega express"],
+   412→    message: WA_MESSAGES.digital,
+   413→    details: {
+   414→      intro:
+   415→        "La impresión digital elimina las planchas: tu archivo pasa directo a máquina. Es la tecnología ideal para tirajes cortos, pruebas de color, entregas urgentes y personalización variable —cada pieza puede llevar un nombre, código o imagen distinta— sin sacrificar calidad profesional a todo color.",
+   416→      materials: [
+   417→        "Gama completa de papeles y cartulinas",
+   418→        "Adhesivos y sintéticos",
+   419→        "Papeles para etiquetas autoadhesivas",
+   420→      ],
+   421→      finishes: [
+   422→        "Impresión a todo color, cara y doble cara",
+   423→        "Datos variables (nombres, códigos, series)",
+   424→        "Corte a formato y troquel digital",
+   425→        "Encuadernación rápida (grapas, espiral, binder)",
+   426→      ],
+   427→      specs: [
+   428→        { label: "Tiraje recomendado", value: "De 1 a 500+ unidades" },
+   429→        { label: "Tiempo de entrega", value: "24 a 72 horas" },
+   430→        { label: "Personalización", value: "Datos variables pieza por pieza" },
+   431→        { label: "Formato", value: "Tarjetas, flyers, afiches, etiquetas, invitaciones" },
+   432→      ],
+   433→      useCases: [
+   434→        "Invitaciones personales y de evento",
+   435→        "Credenciales y certificados nominados",
+   436→        "Etiquetas y stickers cortos",
+   437→        "Reimpresiones urgentes de papelería",
+   438→      ],
+   439→      tip: "¿No sabes cuántas unidades necesitas? Empieza digital: imprime 100, valida el mercado y escala a offset cuando la demanda crezca.",
+   440→    },
+   441→  },
+   442→];
+   443→
+   444→/* ————————————————————————————————————————————————
+   445→   Industrias servidas (sección educativa)
+   446→———————————————————————————————————————————————— */
+   447→export interface Industry {
+   448→  id: string;
+   449→  name: string;
+   450→  icon: "food" | "pharma" | "retail" | "editorial" | "gov";
+   451→  tagline: string;
+   452→  description: string;
+   453→  products: string[];
+   454→  insight: string;
+   455→  message: string;
+   456→}
+   457→
+   458→export const INDUSTRIES: Industry[] = [
+   459→  {
+   460→    id: "alimentos",
+   461→    name: "Alimentos & Bebidas",
+   462→    icon: "food",
+   463→    tagline: "Tu producto, imparable en góndola",
+   464→    description:
+   465→      "Cajas, bandejas y envolturas food-grade para marcas que compiten por atención en el punto de venta, con la seguridad de insumos aptos para contacto con alimentos.",
+   466→    products: ["Cajas plegadizas", "Bandejas", "Envolturas", "Sleeves promocionales"],
+   467→    insight:
+   468→      "En góndola tienes 2,6 segundos de atención: el color y el acabado de tu caja deciden si el cliente te elige o elige al de al lado.",
+   469→    message: WA_MESSAGES.alimentos,
+   470→  },
+   471→  {
+   472→    id: "farmaceutica",
+   473→    name: "Farmacéutica & Salud",
+   474→    icon: "pharma",
+   475→    tagline: "Precisión que prescribe confianza",
+   476→    description:
+   477→      "Estuches e insertos con trazabilidad lote a lote, series y acabados listos para líneas de envase automatizadas de laboratorios e instituciones de salud.",
+   478→    products: ["Estuches de medicamentos", "Insertos y prospectos", "Estuches para dispositivos", "Series y códigos"],
+   479→    insight:
+   480→      "Un estuche farmacéutico no solo informa: debe correr limpio a alta velocidad en la línea de envase. Calibramos cada desarrollo para que tu producción no se detenga.",
+   481→    message: WA_MESSAGES.farmaceutico,
+   482→  },
+   483→  {
+   484→    id: "retail",
+   485→    name: "Retail & Promoción",
+   486→    icon: "retail",
+   487→    tagline: "Marcas que se regalan solas",
+   488→    description:
+   489→      "Bolsas de papel, estuches rígidos y exhibidores que convierten cada compra en una experiencia de marca y cada campaña en una conversación.",
+   490→    products: ["Paper bags", "Estuches rígidos", "Displays y exhibidores", "Kits corporativos"],
+   491→    insight:
+   492→      "La bolsa de papel es publicidad ambulante: cada cliente que camina con tu bolsa por la ciudad te regala impresiones gratis.",
+   493→    message: WA_MESSAGES.packaging,
+   494→  },
+   495→  {
+   496→    id: "editorial",
+   497→    name: "Editorial & Publicaciones",
+   498→    icon: "editorial",
+   499→    tagline: "Historias bien encuadernadas",
+   500→    description:
+   501→      "Libros, revistas y catálogos con encuadernación Hotmelt/PUR, cosido editorial y selección de papel por secciones para editoriales, universidades y empresas.",
+   502→    products: ["Libros emblocados", "Revistas y catálogos", "Anuarios", "Memorias institucionales"],
+   503→    insight:
+   504→      "El papel de una portada dice tanto como su título: un 250 g laminado mate se percibe como libro de colección antes de leer la primera página.",
+   505→    message: WA_MESSAGES.books,
+   506→  },
+   507→  {
+   508→    id: "instituciones",
+   509→    name: "Instituciones & Gobierno",
+   510→    icon: "gov",
+   511→    tagline: "Proyectos que quedan en la historia",
+   512→    description:
+   513→      "Publicaciones oficiales, atlas, informes y campañas institucionales con la puntualidad y confidencialidad que exigen los proyectos públicos.",
+   514→    products: ["Publicaciones oficiales", "Atlas e informes", "Campañas institucionales", "Papelería fiscal"],
+   515→    insight:
+   516→      "Los proyectos institucionales se miden en hitos: entrega puntual, depósito legal y calidad constante — compromisos que cumplimos lote a lote.",
+   517→    message: WA_MESSAGES.general,
+   518→  },
+   519→];
+   520→
+   521→/* ————————————————————————————————————————————————
+   522→   Clientes — empresas e instituciones del portfolio nacional
+   523→   ⚠️ DRAFT: reemplazar/añadir la lista definitiva de clientes reales aquí.
+   524→———————————————————————————————————————————————— */
+   525→export interface Client {
+   526→  id: string;
+   527→  name: string;
+   528→  sector: string;
+   529→  city: string;
+   530→  /** Iniciales o palabra corta para el monograma */
+   531→  mark: string;
+   532→  /** Estilo del monograma */
+   533→  style: "circle" | "square" | "shield" | "text";
+   534→  /** Color de acento de marca (hex) */
+   535→  color: string;
+   536→}
+   537→
+   538→export const CLIENTS: Client[] = [
+   539→  { id: "inti", name: "Laboratorios INTI", sector: "Farmacéutica", city: "La Paz", mark: "INTI", style: "square", color: "#0E5FA8" },
+   540→  { id: "bago", name: "Laboratorios Bagó", sector: "Farmacéutica", city: "La Paz", mark: "Bagó", style: "shield", color: "#1B3B8B" },
+   541→  { id: "vita", name: "Laboratorios VITA", sector: "Farmacéutica", city: "La Paz", mark: "VITA", style: "circle", color: "#1E7A45" },
+   542→  { id: "cbn", name: "Cervecería Boliviana Nacional", sector: "Alimentos & Bebidas", city: "La Paz", mark: "CBN", style: "shield", color: "#B01E2F" },
+   543→  { id: "pil", name: "PIL Andina", sector: "Alimentos & Bebidas", city: "La Paz", mark: "PIL", style: "circle", color: "#0C4DA2" },
+   544→  { id: "fancesa", name: "FANCESA", sector: "Alimentos", city: "Santa Cruz", mark: "FCS", style: "square", color: "#D97B00" },
+   545→  { id: "bisa", name: "Banco BISA", sector: "Banca", city: "La Paz", mark: "BISA", style: "square", color: "#12325E" },
+   546→  { id: "ganadero", name: "Banco Ganadero", sector: "Banca", city: "Santa Cruz", mark: "BG", style: "circle", color: "#2E7D32" },
+   547→  { id: "entel", name: "Entel S.A.", sector: "Telecomunicaciones", city: "La Paz", mark: "entel", style: "text", color: "#0B72B5" },
+   548→  { id: "tigo", name: "Tigo Bolivia", sector: "Telecomunicaciones", city: "Santa Cruz", mark: "tigo", style: "text", color: "#0A1E3C" },
+   549→  { id: "deber", name: "El Deber", sector: "Medios", city: "Santa Cruz", mark: "ED", style: "square", color: "#1F4E9C" },
+   550→  { id: "santillana", name: "Santillana Bolivia", sector: "Editorial", city: "La Paz", mark: "S", style: "circle", color: "#E4322B" },
+   551→  { id: "hoguera", name: "Editorial La Hoguera", sector: "Editorial", city: "Santa Cruz", mark: "LH", style: "shield", color: "#E8740C" },
+   552→  { id: "gamlp", name: "Gobierno Autónomo Municipal de La Paz", sector: "Institucional", city: "La Paz", mark: "GAM", style: "shield", color: "#8E1B1B" },
+   553→  { id: "cni", name: "Cámara Nacional de Industrias", sector: "Gremial", city: "La Paz", mark: "CNI", style: "square", color: "#1D5AA0" },
+   554→];
+   555→
+   556→/* ————————————————————————————————————————————————
+   557→   Reseñas de clientes
+   558→   ⚠️ DRAFT: reemplazar por testimonios reales verificados.
+   559→———————————————————————————————————————————————— */
+   560→export interface Review {
+   561→  quote: string;
+   562→  name: string;
+   563→  role: string;
+   564→  company: string;
+   565→  sector: string;
+   566→  rating: number;
+   567→}
+   568→
+   569→export const REVIEWS: Review[] = [
+   570→  {
+   571→    quote:
+   572→      "Las cajas llegan impecables lote tras lote. El color es idéntico al que aprobamos en la prueba — eso, en farmacéutica, no tiene precio.",
+   573→    name: "Marcela R.",
+   574→    role: "Jefe de Compras de Empaques",
+   575→    company: "Laboratorio farmacéutico",
+   576→    sector: "Farmacéutica",
+   577→    rating: 5,
+   578→  },
+   579→  {
+   580→    quote:
+   581→      "Campaña de packaging estacional entregada con días de sobra. Puntualidad total y acabados que destacan en góndola frente a marcas importadas.",
+   582→    name: "Ricardo M.",
+   583→    role: "Gerente de Marca",
+   584→    company: "Alimentos & Bebidas",
+   585→    sector: "Alimentos",
+   586→    rating: 5,
+   587→  },
+   588→  {
+   589→    quote:
+   590→      "Nuestros catálogos salen con nivel internacional: papel, color y encuadernación de primer nivel. Los lectores lo notan en cada edición.",
+   591→    name: "Carolina V.",
+   592→    role: "Directora Editorial",
+   593→    company: "Editorial boliviana",
+   594→    sector: "Editorial",
+   595→    rating: 5,
+   596→  },
+   597→  {
+   598→    quote:
+   599→      "El portal Web to Print nos ahorra horas cada semana: la papelería de nuestras sucursales se pide en minutos, con la marca siempre perfecta.",
+   600→    name: "Jorge A.",
+   601→    role: "Coordinador de Marketing",
+   602→    company: "Entidad financiera",
+   603→    sector: "Banca",
+   604→    rating: 5,
+   605→  },
+   606→  {
+   607→    quote:
+   608→      "Imprimieron una publicación institucional de gran formato con una exigencia altísima de calidad y plazos. Cumplieron con precisión de reloj.",
+   609→    name: "Unidad de Planificación",
+   610→    role: "Coordinación de proyecto editorial",
+   611→    company: "Institución pública",
+   612→    sector: "Institucional",
+   613→    rating: 5,
+   614→  },
+   615→];
+   616→
+   617→/* ————————————————————————————————————————————————
+   618→   FAQ — base de conocimiento de SPC AI y la sección de preguntas
+   619→———————————————————————————————————————————————— */
+   620→export interface Faq {
+   621→  q: string;
+   622→  a: string;
+   623→}
+   624→
+   625→export const FAQS: Faq[] = [
+   626→  {
+   627→    q: "¿Cuál es el tiraje mínimo para imprimir?",
+   628→    a: "Depende de la tecnología: en impresión digital imprimimos desde 1 unidad, ideal para tirajes cortos, pruebas y personalizados. En offset, el punto óptimo empieza alrededor de 500–1.000 unidades según el producto. Si dudas, cuéntanos tu proyecto por WhatsApp y te recomendamos la tecnología más económica para tu cantidad.",
+   629→  },
+   630→  {
+   631→    q: "¿Cuánto tarda la entrega de mi trabajo?",
+   632→    a: "Impresión digital: de 24 a 72 horas. Impresión offset y packaging: entre 7 y 15 días hábiles según acabados y validaciones. Los proyectos con encuadernación especial o troqueles nuevos pueden requerir más tiempo — siempre te confirmamos la fecha antes de iniciar.",
+   633→  },
+   634→  {
+   635→    q: "¿Puedo imprimir con mi propio diseño?",
+   636→    a: "¡Claro! Aceptamos tus archivos listos (PDF de alta resolución preferentemente) y también podemos ayudarte a prepararlos: sangrado, márgenes, perfil de color y líneas de corte. Si aún no tienes diseño, nuestro equipo te asesora para que tu impreso salga profesional.",
+   637→  },
+   638→  {
+   639→    q: "¿Cómo pido una cotización?",
+   640→    a: "Escríbenos por WhatsApp indicando: 1) el producto (caja, revista, bolsas, tarjetas…), 2) cantidad, 3) tamaño, 4) material o acabados que imaginas y 5) si cuentas con diseño. Con esos datos te enviamos una cotización clara, normalmente el mismo día.",
+   641→  },
+   642→  {
+   643→    q: "¿Sus empaques son aptos para alimentos y medicamentos?",
+   644→    a: "Sí. Trabajamos con cartones e insumos aptos para contacto con alimentos y producción de baja migración, junto a impresión de alta definición, series y trazabilidad por lote para la industria farmacéutica.",
+   645→  },
+   646→  {
+   647→    q: "¿Qué es el Web to Print?",
+   648→    a: "Es nuestro portal en línea para empresas: tu equipo pide papelería e impresos corporativos desde cualquier ciudad, con plantillas de marca aprobadas y precios preestablecidos. Elimina correos y errores de versión — todo se pide en minutos.",
+   649→  },
+   650→  {
+   651→    q: "¿Entregan en todo Bolivia?",
+   652→    a: "Sí, despachamos a los nueve departamentos. Coordinamos la logística según tu ciudad y la urgencia del proyecto — muchas entregas salen de nuestra planta en La Paz el mismo día en que terminan.",
+   653→  },
+   654→  {
+   655→    q: "¿Hacen diseño gráfico también?",
+   656→    a: "Contamos con asesoría y desarrollo de diseño para packaging e impresos. Si llegas con la idea, nuestro equipo la convierte en un archivo listo para producción con los estándares técnicos de imprenta.",
+   657→  },
+   658→];
+   659→

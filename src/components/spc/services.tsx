@@ -3,12 +3,12 @@
 import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Check, Info } from "lucide-react";
+import { ArrowUpRight, Check, ArrowRight } from "lucide-react";
 import { TiltCard } from "./tilt-card";
 import { Reveal } from "./reveal";
 import { WhatsAppIcon } from "./whatsapp-button";
-import { ServiceDialog } from "./service-dialog";
-import { SERVICES, waLink, type Service, type ServiceCategory } from "@/lib/spc";
+import { useRouter } from "./site-router";
+import { SERVICES, waLink, type ServiceCategory } from "@/lib/spc";
 import { cn } from "@/lib/utils";
 
 type Filter = "todos" | ServiceCategory;
@@ -22,8 +22,13 @@ const FILTERS: { id: Filter; label: string }[] = [
 
 export function Services() {
   const [filter, setFilter] = useState<Filter>("todos");
-  const [detail, setDetail] = useState<Service | null>(null);
+  const router = useRouter();
   const visible = SERVICES.filter((s) => filter === "todos" || s.category === filter);
+
+  function openService(id: string) {
+    router.navigate({ name: "service", id });
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
 
   return (
     <section
@@ -110,14 +115,14 @@ export function Services() {
                 <TiltCard className="h-full rounded-[26px]" maxTilt={8}>
                   <article
                     className="gloss-card group flex h-full flex-col overflow-hidden rounded-[26px]"
-                    aria-label={`${s.title} — ver información detallada`}
+                    aria-label={`${s.title} — ver página del servicio`}
                   >
-                    {/* Imagen del producto — clic abre la ficha completa */}
+                    {/* Imagen del producto — clic abre la página completa */}
                     <button
                       type="button"
-                      onClick={() => setDetail(s)}
+                      onClick={() => openService(s.id)}
                       className="relative block aspect-[16/11] w-full cursor-pointer overflow-hidden text-left"
-                      aria-label={`Ver información detallada de ${s.title}`}
+                      aria-label={`Ver página de ${s.title}`}
                     >
                       <Image
                         src={s.image}
@@ -157,7 +162,7 @@ export function Services() {
                         ))}
                       </ul>
 
-                      {/* CTA del funnel: ficha de detalles + WhatsApp con contexto */}
+                      {/* CTA del funnel: página del servicio + WhatsApp con contexto */}
                       <div className="mt-2 grid grid-cols-[1fr_auto] gap-2">
                         <a
                           href={waLink(s.message)}
@@ -171,12 +176,12 @@ export function Services() {
                         </a>
                         <button
                           type="button"
-                          onClick={() => setDetail(s)}
-                          className="btn-press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-[#27519B]/20 bg-white/70 px-4 text-[14px] font-semibold text-[#27519B] transition-all duration-300 hover:border-[#27519B]/45 hover:bg-[#27519B]/[0.07] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#27519B]/60"
-                          aria-label={`Ver información detallada de ${s.title}`}
+                          onClick={() => openService(s.id)}
+                          className="btn-press group/explore inline-flex h-11 items-center justify-center gap-2 rounded-full border border-[#27519B]/20 bg-white/70 px-4 text-[14px] font-semibold text-[#27519B] transition-all duration-300 hover:border-[#27519B]/45 hover:bg-[#27519B]/[0.07] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#27519B]/60"
+                          aria-label={`Explorar página de ${s.title}`}
                         >
-                          <Info className="h-4 w-4" />
-                          Detalles
+                          Explorar
+                          <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/explore:translate-x-0.5" />
                         </button>
                       </div>
                     </div>
@@ -202,9 +207,6 @@ export function Services() {
           </p>
         </Reveal>
       </div>
-
-      {/* Ficha profunda del servicio seleccionado */}
-      <ServiceDialog service={detail} open={detail !== null} onOpenChange={(v) => !v && setDetail(null)} />
     </section>
   );
 }

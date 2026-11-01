@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="132" height="52" viewBox="0 0 132 52" role="img" aria-label="Cámara Nacional de Industrias">
+  <!-- CNI recreation: blue roundel with white CNI letters -->
+  <defs>
+    <linearGradient id="cni" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2563A8"/>
+      <stop offset="1" stop-color="#153E6E"/>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="130" height="50" rx="25" fill="url(#cni)"/>
+  <rect x="1" y="1" width="130" height="50" rx="25" fill="none" stroke="#9DC1E8" stroke-width="1" opacity=".6"/>
+  <text x="66" y="34" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" fill="#ffffff" letter-spacing="2">CNI</text>
+</svg>

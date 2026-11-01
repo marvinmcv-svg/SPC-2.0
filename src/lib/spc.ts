@@ -24,7 +24,8 @@ export const SPC = {
     "Fortalecer el liderazgo en el mercado de la industria gráfica, consolidando al sector y promoviendo solo lo mejor.",
   whatsapp: {
     /** Número de WhatsApp Business en formato internacional sin “+”.  */
-    number: "5912211121",
+    number: "59177165787",
+    display: "+591 77165787",
     displayName: "SPC Impresores S.A.",
   },
 } as const;
@@ -80,6 +81,8 @@ export interface Service {
   title: string;
   description: string;
   image: string;
+  /** Fotografía real de producción del sitio original de SPC */
+  realPhoto: string;
   category: ServiceCategory;
   categoryLabel: string;
   highlights: string[];
@@ -94,6 +97,7 @@ export const SERVICES: Service[] = [
     description:
       "Envases y cajas food-grade que protegen tu producto y elevan tu marca en góndola.",
     image: "/spc/packaging-alimentos.jpg",
+    realPhoto: "/spc/real-packaging-alimentos.jpg",
     category: "packaging",
     categoryLabel: "Packaging",
     highlights: ["Cartón food-grade", "Impresión offset premium", "Bordes y troquel fino"],
@@ -133,6 +137,7 @@ export const SERVICES: Service[] = [
     description:
       "Cajas y estuches con la precisión, trazabilidad y estándares que exige la industria.",
     image: "/spc/packaging-farmaceutico.jpg",
+    realPhoto: "/spc/real-packaging-farmaceutico.jpg",
     category: "packaging",
     categoryLabel: "Packaging",
     highlights: ["Precisión farmacéutica", "Series y códigos", "Calidad certificada"],
@@ -172,6 +177,7 @@ export const SERVICES: Service[] = [
     description:
       "Estuches rígidos, packaging promocional y presentaciones que enamoran al cliente.",
     image: "/spc/packaging-comercial.jpg",
+    realPhoto: "/spc/real-packaging-comercial.jpg",
     category: "packaging",
     categoryLabel: "Packaging",
     highlights: ["Estuches rígidos", "Acabados premium", "Laminación y UV"],
@@ -211,6 +217,7 @@ export const SERVICES: Service[] = [
     description:
       "Bolsas de papel con asa, en todos los colores y tamaños, que convierten tu marca en experiencia.",
     image: "/spc/paper-bags.jpg",
+    realPhoto: "/spc/real-paper-bags.jpg",
     category: "packaging",
     categoryLabel: "Packaging",
     highlights: ["Asas resistentes", "Papeles de color", "Gran volumen"],
@@ -250,6 +257,7 @@ export const SERVICES: Service[] = [
     description:
       "Papelería comercial e identidad corporativa con acabados impecables: hojas membretadas, tarjetas y más.",
     image: "/spc/impresos-comerciales.jpg",
+    realPhoto: "/spc/real-impresos-comerciales.jpg",
     category: "comercial",
     categoryLabel: "Comercial",
     highlights: ["Identidad corporativa", "Papeles premium", "Definición de color"],
@@ -289,6 +297,7 @@ export const SERVICES: Service[] = [
     description:
       "Encuadernación Hotmelt y PUR de alta resistencia para libros que duran generaciones.",
     image: "/spc/libros.jpg",
+    realPhoto: "/spc/real-libros.jpg",
     category: "comercial",
     categoryLabel: "Comercial",
     highlights: ["Encuadernación PUR", "Lomos cuadrados", "Tirajes largos"],
@@ -328,6 +337,7 @@ export const SERVICES: Service[] = [
     description:
       "Publicaciones periódicas y catálogos con papel, color y encuadernación de primer nivel.",
     image: "/spc/revistas.jpg",
+    realPhoto: "/spc/real-revistas.jpg",
     category: "comercial",
     categoryLabel: "Comercial",
     highlights: ["Calidad editorial", "Cosido y encolado", "Distribución nacional"],
@@ -367,6 +377,7 @@ export const SERVICES: Service[] = [
     description:
       "Calendarios de escritorio y pared que ponen tu marca frente a tu cliente los 365 días del año.",
     image: "/spc/calendarios.jpg",
+    realPhoto: "/spc/real-calendarios.jpg",
     category: "comercial",
     categoryLabel: "Comercial",
     highlights: ["Diseños personalizados", "Espiral y taco", "Campaña anual"],
@@ -406,6 +417,7 @@ export const SERVICES: Service[] = [
     description:
       "Impresión digital bajo demanda: tirajes cortos, entregas rápidas y personalización variable.",
     image: "/spc/impresion-digital.jpg",
+    realPhoto: "/spc/real-impresion-digital.jpg",
     category: "digital",
     categoryLabel: "Digital",
     highlights: ["Bajo demanda", "Datos variables", "Entrega express"],
@@ -520,37 +532,36 @@ export const INDUSTRIES: Industry[] = [
 
 /* ————————————————————————————————————————————————
    Clientes — empresas e instituciones del portfolio nacional
-   ⚠️ DRAFT: reemplazar/añadir la lista definitiva de clientes reales aquí.
+   Logotipos reales en /spc/logos/ (sitios oficiales y páginas
+   verificadas de cada marca).
 ———————————————————————————————————————————————— */
 export interface Client {
   id: string;
   name: string;
   sector: string;
   city: string;
-  /** Iniciales o palabra corta para el monograma */
-  mark: string;
-  /** Estilo del monograma */
-  style: "circle" | "square" | "shield" | "text";
-  /** Color de acento de marca (hex) */
-  color: string;
+  /** Ruta del logotipo (png/jpg/svg) dentro de /public */
+  logo: string;
+  /** true = logo cuadrado con fondo de color (chip de marca) */
+  chip?: boolean;
 }
 
 export const CLIENTS: Client[] = [
-  { id: "inti", name: "Laboratorios INTI", sector: "Farmacéutica", city: "La Paz", mark: "INTI", style: "square", color: "#0E5FA8" },
-  { id: "bago", name: "Laboratorios Bagó", sector: "Farmacéutica", city: "La Paz", mark: "Bagó", style: "shield", color: "#1B3B8B" },
-  { id: "vita", name: "Laboratorios VITA", sector: "Farmacéutica", city: "La Paz", mark: "VITA", style: "circle", color: "#1E7A45" },
-  { id: "cbn", name: "Cervecería Boliviana Nacional", sector: "Alimentos & Bebidas", city: "La Paz", mark: "CBN", style: "shield", color: "#B01E2F" },
-  { id: "pil", name: "PIL Andina", sector: "Alimentos & Bebidas", city: "La Paz", mark: "PIL", style: "circle", color: "#0C4DA2" },
-  { id: "fancesa", name: "FANCESA", sector: "Alimentos", city: "Santa Cruz", mark: "FCS", style: "square", color: "#D97B00" },
-  { id: "bisa", name: "Banco BISA", sector: "Banca", city: "La Paz", mark: "BISA", style: "square", color: "#12325E" },
-  { id: "ganadero", name: "Banco Ganadero", sector: "Banca", city: "Santa Cruz", mark: "BG", style: "circle", color: "#2E7D32" },
-  { id: "entel", name: "Entel S.A.", sector: "Telecomunicaciones", city: "La Paz", mark: "entel", style: "text", color: "#0B72B5" },
-  { id: "tigo", name: "Tigo Bolivia", sector: "Telecomunicaciones", city: "Santa Cruz", mark: "tigo", style: "text", color: "#0A1E3C" },
-  { id: "deber", name: "El Deber", sector: "Medios", city: "Santa Cruz", mark: "ED", style: "square", color: "#1F4E9C" },
-  { id: "santillana", name: "Santillana Bolivia", sector: "Editorial", city: "La Paz", mark: "S", style: "circle", color: "#E4322B" },
-  { id: "hoguera", name: "Editorial La Hoguera", sector: "Editorial", city: "Santa Cruz", mark: "LH", style: "shield", color: "#E8740C" },
-  { id: "gamlp", name: "Gobierno Autónomo Municipal de La Paz", sector: "Institucional", city: "La Paz", mark: "GAM", style: "shield", color: "#8E1B1B" },
-  { id: "cni", name: "Cámara Nacional de Industrias", sector: "Gremial", city: "La Paz", mark: "CNI", style: "square", color: "#1D5AA0" },
+  { id: "inti", name: "Laboratorios INTI", sector: "Farmacéutica", city: "La Paz", logo: "/spc/logos/inti.png" },
+  { id: "bago", name: "Laboratorios Bagó", sector: "Farmacéutica", city: "La Paz", logo: "/spc/logos/bago.svg" },
+  { id: "vita", name: "Laboratorios VITA", sector: "Farmacéutica", city: "La Paz", logo: "/spc/logos/vita.svg" },
+  { id: "cbn", name: "Cervecería Boliviana Nacional", sector: "Alimentos & Bebidas", city: "La Paz", logo: "/spc/logos/cbn.svg" },
+  { id: "pil", name: "PIL Andina", sector: "Alimentos & Bebidas", city: "La Paz", logo: "/spc/logos/pil.jpg" },
+  { id: "fancesa", name: "FANCESA", sector: "Industria", city: "Sucre", logo: "/spc/logos/fancesa.jpg", chip: true },
+  { id: "bisa", name: "Banco BISA", sector: "Banca", city: "La Paz", logo: "/spc/logos/bisa.jpg", chip: true },
+  { id: "ganadero", name: "Banco Ganadero", sector: "Banca", city: "Santa Cruz", logo: "/spc/logos/ganadero.svg" },
+  { id: "entel", name: "Entel S.A.", sector: "Telecomunicaciones", city: "La Paz", logo: "/spc/logos/entel.png" },
+  { id: "tigo", name: "Tigo Bolivia", sector: "Telecomunicaciones", city: "Santa Cruz", logo: "/spc/logos/tigo.svg" },
+  { id: "deber", name: "El Deber", sector: "Medios", city: "Santa Cruz", logo: "/spc/logos/deber.png" },
+  { id: "santillana", name: "Santillana Bolivia", sector: "Editorial", city: "La Paz", logo: "/spc/logos/santillana.svg" },
+  { id: "hoguera", name: "Editorial La Hoguera", sector: "Editorial", city: "Santa Cruz", logo: "/spc/logos/hoguera.jpg" },
+  { id: "gamlp", name: "Gobierno Autónomo Municipal de La Paz", sector: "Institucional", city: "La Paz", logo: "/spc/logos/gamlp.png" },
+  { id: "cni", name: "Cámara Nacional de Industrias", sector: "Gremial", city: "La Paz", logo: "/spc/logos/cni.svg" },
 ];
 
 /* ————————————————————————————————————————————————

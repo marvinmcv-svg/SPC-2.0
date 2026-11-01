@@ -1,16 +1,22 @@
 "use client";
 
-import { ArrowUpRight, MapPin, Phone, Mail, Clock } from "lucide-react";
+import { ArrowUpRight, MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react";
 import { SpcLogo } from "./logo";
-import { SPC } from "@/lib/spc";
+import { SERVICES, SPC, waLink, WA_MESSAGES } from "@/lib/spc";
+import { useRouter, type Route } from "./site-router";
 
 export function Footer() {
   const year = new Date().getFullYear();
+  const { navigate } = useRouter();
+
+  function go(next: Route, section?: string) {
+    navigate(next, section);
+  }
 
   return (
     <footer className="relative border-t border-white/8 bg-[#080F1E]">
       <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr_1fr]">
+        <div className="grid gap-12 lg:grid-cols-[1.15fr_1fr_1fr]">
           {/* Marca */}
           <div>
             <SpcLogo variant="light" className="h-12 w-auto" />
@@ -22,6 +28,15 @@ export function Footer() {
               <Clock className="h-3.5 w-3.5 text-[#8FB0E8]" />
               Lun – Vie · 8:00 a 18:00
             </p>
+            <a
+              href={waLink(WA_MESSAGES.general)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-press mt-4 flex items-center gap-2.5 rounded-full border border-[#25D366]/30 bg-[#25D366]/[0.08] px-4 py-2.5 text-[13.5px] font-semibold text-[#4BE38A] transition-all duration-300 hover:border-[#25D366]/60 hover:bg-[#25D366]/[0.15] hover:text-[#6BEB9A]"
+            >
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp directo · {SPC.whatsapp.display}
+            </a>
           </div>
 
           {/* Navegación */}
@@ -31,33 +46,51 @@ export function Footer() {
             </p>
             <ul className="mt-5 space-y-3">
               {[
-                ["#inicio", "Inicio"],
-                ["#nosotros", "Nosotros"],
-                ["#productos", "Productos"],
-                ["#industrias", "Industrias"],
-                ["#clientes", "Clientes"],
-                ["#tecnologia", "Tecnología"],
-                ["#proceso", "Proceso"],
-                ["#web-to-print", "Web to Print"],
-                ["#faq", "Preguntas frecuentes"],
-                ["#contacto", "Contacto"],
-              ].map(([href, label]) => (
-                <li key={href}>
-                  <a
-                    href={href}
+                { label: "Inicio", onClick: () => go({ name: "home" }) },
+                { label: "Nosotros", onClick: () => go({ name: "about" }) },
+                { label: "Productos", onClick: () => go({ name: "home" }, "productos") },
+                { label: "Industrias", onClick: () => go({ name: "home" }, "industrias") },
+                { label: "Clientes", onClick: () => go({ name: "home" }, "clientes") },
+                { label: "Tecnología", onClick: () => go({ name: "home" }, "tecnologia") },
+                { label: "Proceso", onClick: () => go({ name: "home" }, "proceso") },
+                { label: "Web to Print", onClick: () => go({ name: "home" }, "web-to-print") },
+                { label: "Preguntas frecuentes", onClick: () => go({ name: "home" }, "faq") },
+                { label: "Contacto", onClick: () => go({ name: "home" }, "contacto") },
+              ].map((l) => (
+                <li key={l.label}>
+                  <button
+                    type="button"
+                    onClick={l.onClick}
                     className="btn-press group inline-flex items-center gap-1.5 text-[15px] font-medium text-white/70 transition-colors hover:text-white"
                   >
-                    {label}
+                    {l.label}
                     <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
           </nav>
 
-          {/* Contacto */}
+          {/* Servicios + contacto */}
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/40">
+              Los 9 servicios
+            </p>
+            <ul className="mt-5 space-y-2.5">
+              {SERVICES.map((s) => (
+                <li key={s.id}>
+                  <button
+                    type="button"
+                    onClick={() => go({ name: "service", id: s.id })}
+                    className="btn-press text-left text-[13.5px] font-medium text-white/60 transition-colors hover:text-white"
+                  >
+                    {s.title}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-7 text-[11px] font-bold uppercase tracking-[0.18em] text-white/40">
               Contacto directo
             </p>
             <ul className="mt-5 space-y-4 text-[15px]">

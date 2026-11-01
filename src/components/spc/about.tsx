@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { motion, useInView, useReducedMotion, useMotionValue, useTransform, animate } from "framer-motion";
-import { HeartHandshake, Target, Eye, MapPin } from "lucide-react";
+import { HeartHandshake, Target, Eye, MapPin, ArrowRight } from "lucide-react";
 import { Reveal, StaggerGroup, StaggerItem } from "./reveal";
 import { SPC } from "@/lib/spc";
+import { useRouter } from "./site-router";
 
 /** Contador animado con spring — se activa al entrar en viewport */
 function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
@@ -36,6 +37,7 @@ function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
 
 export function About() {
   const years = new Date().getFullYear() - SPC.founded;
+  const router = useRouter();
 
   return (
     <section id="nosotros" className="relative overflow-hidden bg-background py-24 sm:py-32">
@@ -137,6 +139,18 @@ export function About() {
             </div>
           </Reveal>
         </div>
+
+        {/* Enlace a la página completa de empresa */}
+        <Reveal delay={0.1}>
+          <button
+            type="button"
+            onClick={() => router.navigate({ name: "about" })}
+            className="btn-press group mx-auto mt-10 flex items-center gap-2.5 rounded-full border border-[#27519B]/20 bg-white/70 px-6 py-3 text-[14.5px] font-semibold text-[#27519B] transition-all duration-300 hover:border-[#27519B]/45 hover:bg-[#27519B]/[0.06]"
+          >
+            Conoce nuestra historia completa
+            <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+          </button>
+        </Reveal>
       </div>
     </section>
   );

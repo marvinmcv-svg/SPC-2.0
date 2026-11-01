@@ -16,13 +16,13 @@ interface ChatMsg {
 
 const WELCOME: ChatMsg = {
   role: "ai",
-  text: "¡Hola! 👋 Soy SPC AI, la recepcionista virtual de SPC Impresores. Pregúntame lo que quieras: servicios, tirajes, plazos, materiales o cómo cotizar tu proyecto.",
+  text: "¡Hola! 👋 Soy SPenCer, la recepcionista virtual de SPC Impresores. Te acompaño de la idea a la cotización: pregúntame por servicios, tirajes, plazos, materiales — o dime qué necesitas imprimir y te guío paso a paso.",
 };
 
 /**
- * SPC AI — recepcionista virtual con IA (backend: /api/spc-ai).
+ * SPenCer — recepcionista virtual con IA (backend: /api/spc-ai).
  * Panel glossy estilo Apple con typing indicator, chips de FAQ y
- * handoff a WhatsApp cuando el usuario está listo para cotizar.
+ * sales funnel conversacional que termina en WhatsApp.
  */
 export function SpcAi() {
   const [open, setOpen] = useState(false);
@@ -135,10 +135,10 @@ export function SpcAi() {
             transition={{ type: "spring", stiffness: 280, damping: 26 }}
             style={{ transformOrigin: "bottom right" }}
             role="dialog"
-            aria-label="Chat con SPC AI, recepcionista virtual"
+            aria-label="Chat con SPenCer, recepcionista virtual"
             className="fixed bottom-[8.75rem] right-3 z-[60] flex max-h-[min(66vh,560px)] w-[min(92vw,388px)] flex-col overflow-hidden rounded-[26px] border border-[#27519B]/15 bg-[#F6F9FE] shadow-[0_44px_90px_-22px_rgba(10,20,40,0.55)] sm:bottom-[9.25rem] sm:right-6"
           >
-            {/* Header — identidad SPC AI */}
+            {/* Header — identidad SPenCer */}
             <div className="relative overflow-hidden bg-gradient-to-br from-[#2E5AA8] via-[#27519B] to-[#16233F] px-4 py-3.5">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_15%_-10%,rgba(160,195,255,0.35),transparent_60%)]" />
               <div className="relative flex items-center gap-3">
@@ -153,19 +153,19 @@ export function SpcAi() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-1.5 text-[15px] font-bold leading-tight text-white">
-                    SPC AI
+                    SPenCer
                     <span className="rounded-full bg-white/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white/85">
-                      beta
+                      AI
                     </span>
                   </p>
                   <p className="text-[11.5px] font-medium text-white/70">
-                    Recepcionista virtual · responde al instante · 24/7
+                    Recepcionista virtual · te guía a tu cotización · 24/7
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  aria-label="Cerrar chat de SPC AI"
+                  aria-label="Cerrar chat de SPenCer"
                   className="btn-press flex h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white"
                 >
                   <X className="h-5 w-5" />
@@ -290,7 +290,7 @@ export function SpcAi() {
                 maxLength={500}
                 disabled={busy}
                 placeholder="Escribe tu pregunta…"
-                aria-label="Escribe tu pregunta para SPC AI"
+                aria-label="Escribe tu pregunta para SPenCer"
                 className="h-11 min-w-0 flex-1 rounded-full bg-[#EFF3FA] px-4.5 text-[14px] text-[#0C1526] outline-none ring-[#3F6CC0]/50 transition-shadow placeholder:text-[#8A94A6] focus:ring-2 disabled:opacity-60"
               />
               <button
@@ -304,7 +304,7 @@ export function SpcAi() {
             </form>
 
             <p className="bg-white pb-2.5 text-center text-[10.5px] text-[#8A94A6]">
-              SPC AI puede equivocarse. Para información oficial, contacta a un asesor.
+              SPenCer puede equivocarse. Para información oficial, contacta a un asesor.
             </p>
           </motion.div>
         )}
@@ -319,7 +319,7 @@ export function SpcAi() {
           setHint(false);
           if (next) window.dispatchEvent(new CustomEvent("widget:opened", { detail: "ai" }));
         }}
-        aria-label={open ? "Cerrar chat de SPC AI" : "Abrir chat de SPC AI, recepcionista virtual"}
+        aria-label={open ? "Cerrar chat de SPenCer" : "Abrir chat de SPenCer, recepcionista virtual"}
         aria-expanded={open}
         initial={{ scale: 0, rotate: 30 }}
         animate={{ scale: 1, rotate: 0 }}
@@ -371,7 +371,7 @@ export function SpcAi() {
             exit={{ opacity: 0, x: 8 }}
             className="glass-dark absolute right-[calc(100%+10px)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full px-4 py-2 text-[12.5px] font-semibold text-white"
           >
-            ✨ ¿Dudas? Pregúntame
+            ✨ Hola, soy SPenCer — ¿dudas?
           </motion.span>
         )}
       </motion.button>

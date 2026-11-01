@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="132" viewBox="0 0 120 132" role="img" aria-label="Cervecería Boliviana Nacional — Paceña">
+  <!-- Paceña escudo recreation: red heraldic shield with gold trim -->
+  <defs>
+    <linearGradient id="red" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E8352C"/>
+      <stop offset="1" stop-color="#B8121B"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F8D47C"/>
+      <stop offset=".5" stop-color="#E4B14E"/>
+      <stop offset="1" stop-color="#C9922F"/>
+    </linearGradient>
+  </defs>
+  <!-- shield -->
+  <path d="M60 4 112 16v44c0 34-26 56-52 68C34 116 8 94 8 60V16L60 4z" fill="url(#gold)"/>
+  <path d="M60 12 104 22v37c0 29-22 47-44 58-22-11-44-29-44-58V22L60 12z" fill="url(#red)"/>
+  <!-- inner gold band -->
+  <path d="M60 20 96 28v31c0 24-18 39-36 48-18-9-36-24-36-48V28L60 20z" fill="none" stroke="url(#gold)" stroke-width="3.5"/>
+  <!-- wordmark -->
+  <text x="60" y="62" text-anchor="middle" font-family="'Times New Roman', Georgia, serif" font-size="24" font-style="italic" font-weight="700" fill="url(#gold)">Paceña</text>
+  <text x="60" y="84" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10" letter-spacing="3" fill="#F8D47C">CERVEZA</text>
+</svg>

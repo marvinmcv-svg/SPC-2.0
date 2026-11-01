@@ -6,6 +6,8 @@ import { useEffect, useRef } from "react";
 import { ArrowDown, Layers, Sparkles } from "lucide-react";
 import { WhatsAppButton } from "./whatsapp-button";
 import { ServicesCarousel } from "./services-carousel";
+import { CountUp } from "./count-up";
+import { Magnetic } from "./magnetic";
 import { WA_MESSAGES, SPC } from "@/lib/spc";
 
 /** Revelado palabra por palabra — spring + blur, estilo keynote */
@@ -164,9 +166,11 @@ export function Hero() {
             transition={{ type: "spring", stiffness: 100, damping: 20, delay: 1.0 }}
             className="mt-9 flex flex-col gap-3.5 sm:flex-row sm:items-center"
           >
-            <WhatsAppButton message={WA_MESSAGES.start} size="lg" className="w-full sm:w-auto">
-              Cotiza tu proyecto por WhatsApp
-            </WhatsAppButton>
+            <Magnetic strength={0.22}>
+              <WhatsAppButton message={WA_MESSAGES.start} size="lg" className="w-full sm:w-auto">
+                Cotiza tu proyecto por WhatsApp
+              </WhatsAppButton>
+            </Magnetic>
             <a
               href="#productos"
               className="btn-press inline-flex h-14 items-center justify-center gap-2.5 rounded-full border border-white/20 bg-white/[0.08] px-8 text-base font-semibold text-white backdrop-blur-md transition-all duration-300 hover:border-white/40 hover:bg-white/[0.14] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60"
@@ -189,14 +193,14 @@ export function Hero() {
               <Sparkles className="h-4 w-4 text-white" />
             </span>
             <span className="inline-flex items-center gap-1.5">
-              ¿Dudas? Pregunta a <strong className="font-bold text-white">SPC AI</strong>
+              ¿Dudas? Pregunta a <strong className="font-bold text-white">SPenCer</strong>
               <span className="rounded-full bg-[#25D366]/15 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-[#4BE38A]">
                 nuevo
               </span>
             </span>
           </motion.button>
 
-          {/* Micro-stats */}
+          {/* Micro-stats con contadores animados */}
           <motion.dl
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -204,13 +208,15 @@ export function Hero() {
             className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4"
           >
             {[
-              { v: "20+", l: "años de trayectoria" },
-              { v: "9", l: "líneas de producto" },
-              { v: "3", l: "grandes tecnologías" },
+              { v: 24, suffix: "+", l: "años de trayectoria" },
+              { v: 9, suffix: "", l: "líneas de producto" },
+              { v: 3, suffix: "", l: "grandes tecnologías" },
             ].map((s) => (
               <div key={s.l} className="flex items-baseline gap-2.5">
                 <dt className="sr-only">{s.l}</dt>
-                <dd className="text-3xl font-bold tracking-tight text-white">{s.v}</dd>
+                <dd className="text-3xl font-bold tracking-tight text-white">
+                  <CountUp to={s.v} suffix={s.suffix} duration={2.2} />
+                </dd>
                 <dd className="max-w-[120px] text-[13px] leading-tight text-white/55">{s.l}</dd>
               </div>
             ))}

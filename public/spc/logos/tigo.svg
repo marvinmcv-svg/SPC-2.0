@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="132" height="44" viewBox="0 0 132 44" role="img" aria-label="Tigo">
+  <!-- Tigo wordmark recreation: blue rounded square + white lowercase tigo -->
+  <rect x="1" y="1" width="130" height="42" rx="10" fill="#00377B"/>
+  <rect x="1" y="1" width="130" height="42" rx="10" fill="url(#tg)" fill-opacity=".18"/>
+  <defs>
+    <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <text x="66" y="30" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#ffffff" letter-spacing="0.5">tigo</text>
+</svg>
