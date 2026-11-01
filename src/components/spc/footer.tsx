@@ -34,8 +34,12 @@ export function Footer() {
                 ["#inicio", "Inicio"],
                 ["#nosotros", "Nosotros"],
                 ["#productos", "Productos"],
+                ["#industrias", "Industrias"],
+                ["#clientes", "Clientes"],
+                ["#tecnologia", "Tecnología"],
                 ["#proceso", "Proceso"],
                 ["#web-to-print", "Web to Print"],
+                ["#faq", "Preguntas frecuentes"],
                 ["#contacto", "Contacto"],
               ].map(([href, label]) => (
                 <li key={href}>

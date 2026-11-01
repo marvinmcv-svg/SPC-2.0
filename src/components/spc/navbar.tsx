@@ -12,8 +12,10 @@ const LINKS = [
   { href: "#inicio", label: "Inicio" },
   { href: "#nosotros", label: "Nosotros" },
   { href: "#productos", label: "Productos" },
-  { href: "#proceso", label: "Proceso" },
-  { href: "#web-to-print", label: "Web to Print" },
+  { href: "#industrias", label: "Industrias" },
+  { href: "#clientes", label: "Clientes" },
+  { href: "#tecnologia", label: "Tecnología" },
+  { href: "#faq", label: "FAQ" },
   { href: "#contacto", label: "Contacto" },
 ];
 

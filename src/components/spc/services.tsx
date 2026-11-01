@@ -3,11 +3,12 @@
 import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Check } from "lucide-react";
+import { ArrowUpRight, Check, Info } from "lucide-react";
 import { TiltCard } from "./tilt-card";
 import { Reveal } from "./reveal";
 import { WhatsAppIcon } from "./whatsapp-button";
-import { SERVICES, waLink, type ServiceCategory } from "@/lib/spc";
+import { ServiceDialog } from "./service-dialog";
+import { SERVICES, waLink, type Service, type ServiceCategory } from "@/lib/spc";
 import { cn } from "@/lib/utils";
 
 type Filter = "todos" | ServiceCategory;
@@ -21,6 +22,7 @@ const FILTERS: { id: Filter; label: string }[] = [
 
 export function Services() {
   const [filter, setFilter] = useState<Filter>("todos");
+  const [detail, setDetail] = useState<Service | null>(null);
   const visible = SERVICES.filter((s) => filter === "todos" || s.category === filter);
 
   return (
@@ -106,9 +108,17 @@ export function Services() {
                 }}
               >
                 <TiltCard className="h-full rounded-[26px]" maxTilt={8}>
-                  <article className="gloss-card group flex h-full flex-col overflow-hidden rounded-[26px]">
-                    {/* Imagen del producto */}
-                    <div className="relative aspect-[16/11] overflow-hidden">
+                  <article
+                    className="gloss-card group flex h-full flex-col overflow-hidden rounded-[26px]"
+                    aria-label={`${s.title} — ver información detallada`}
+                  >
+                    {/* Imagen del producto — clic abre la ficha completa */}
+                    <button
+                      type="button"
+                      onClick={() => setDetail(s)}
+                      className="relative block aspect-[16/11] w-full cursor-pointer overflow-hidden text-left"
+                      aria-label={`Ver información detallada de ${s.title}`}
+                    >
                       <Image
                         src={s.image}
                         alt={`${s.title} — producción real de SPC`}
@@ -126,7 +136,7 @@ export function Services() {
                       >
                         <ArrowUpRight className="h-4 w-4" />
                       </span>
-                    </div>
+                    </button>
 
                     {/* Contenido con profundidad Z */}
                     <div className="relative z-[5] flex flex-1 flex-col gap-4 p-6 [transform:translateZ(24px)]">
@@ -147,17 +157,28 @@ export function Services() {
                         ))}
                       </ul>
 
-                      {/* CTA del funnel → WhatsApp con contexto del producto */}
-                      <a
-                        href={waLink(s.message)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-press mt-2 inline-flex h-11 items-center justify-center gap-2.5 rounded-full border border-[#128C7E]/25 bg-gradient-to-b from-[#25D366]/[0.09] to-[#128C7E]/[0.1] text-[14.5px] font-semibold text-[#0E7A67] transition-all duration-300 hover:border-[#25D366]/50 hover:from-[#25D366]/[0.16] hover:to-[#128C7E]/[0.18] hover:text-[#0A6B5A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
-                        aria-label={`Cotizar ${s.title} por WhatsApp`}
-                      >
-                        <WhatsAppIcon className="h-4.5 w-4.5" />
-                        Cotizar {s.title.toLowerCase()}
-                      </a>
+                      {/* CTA del funnel: ficha de detalles + WhatsApp con contexto */}
+                      <div className="mt-2 grid grid-cols-[1fr_auto] gap-2">
+                        <a
+                          href={waLink(s.message)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-press inline-flex h-11 items-center justify-center gap-2.5 rounded-full border border-[#128C7E]/25 bg-gradient-to-b from-[#25D366]/[0.09] to-[#128C7E]/[0.1] px-4 text-[14px] font-semibold text-[#0E7A67] transition-all duration-300 hover:border-[#25D366]/50 hover:from-[#25D366]/[0.16] hover:to-[#128C7E]/[0.18] hover:text-[#0A6B5A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
+                          aria-label={`Cotizar ${s.title} por WhatsApp`}
+                        >
+                          <WhatsAppIcon className="h-4.5 w-4.5" />
+                          Cotizar
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => setDetail(s)}
+                          className="btn-press inline-flex h-11 items-center justify-center gap-2 rounded-full border border-[#27519B]/20 bg-white/70 px-4 text-[14px] font-semibold text-[#27519B] transition-all duration-300 hover:border-[#27519B]/45 hover:bg-[#27519B]/[0.07] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#27519B]/60"
+                          aria-label={`Ver información detallada de ${s.title}`}
+                        >
+                          <Info className="h-4 w-4" />
+                          Detalles
+                        </button>
+                      </div>
                     </div>
                   </article>
                 </TiltCard>
@@ -181,6 +202,9 @@ export function Services() {
           </p>
         </Reveal>
       </div>
+
+      {/* Ficha profunda del servicio seleccionado */}
+      <ServiceDialog service={detail} open={detail !== null} onOpenChange={(v) => !v && setDetail(null)} />
     </section>
   );
 }

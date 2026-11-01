@@ -32,6 +32,15 @@ export function WhatsAppWidget() {
     if (open) setTimeout(() => inputRef.current?.focus(), 350);
   }, [open]);
 
+  // Exclusión mutua con el widget de SPC AI (solo un panel abierto)
+  useEffect(() => {
+    const onSibling = (e: Event) => {
+      if ((e as CustomEvent).detail !== "wa") setOpen(false);
+    };
+    window.addEventListener("widget:opened", onSibling);
+    return () => window.removeEventListener("widget:opened", onSibling);
+  }, []);
+
   function send(message: string) {
     const clean = message.trim();
     if (!clean) return;
@@ -68,7 +77,7 @@ export function WhatsAppWidget() {
             exit={{ opacity: 0, scale: 0.88, y: 24, filter: "blur(6px)" }}
             transition={{ type: "spring", stiffness: 300, damping: 26 }}
             style={{ transformOrigin: "bottom right" }}
-            className="fixed bottom-24 right-3 z-[60] flex w-[min(92vw,380px)] flex-col overflow-hidden rounded-[26px] border border-black/8 bg-white shadow-[0_40px_90px_-20px_rgba(10,20,40,0.5)] sm:bottom-26 sm:right-6"
+            className="fixed bottom-[9.5rem] right-3 z-[60] flex w-[min(92vw,380px)] flex-col overflow-hidden rounded-[26px] border border-black/8 bg-white shadow-[0_40px_90px_-20px_rgba(10,20,40,0.5)] sm:bottom-[9.75rem] sm:right-6"
             role="dialog"
             aria-label="Chat de WhatsApp con SPC"
           >
@@ -185,8 +194,10 @@ export function WhatsAppWidget() {
       <motion.button
         type="button"
         onClick={() => {
-          setOpen((o) => !o);
+          const next = !open;
+          setOpen(next);
           setHint(false);
+          if (next) window.dispatchEvent(new CustomEvent("widget:opened", { detail: "wa" }));
         }}
         aria-label={open ? "Cerrar chat de WhatsApp" : "Abrir chat de WhatsApp"}
         aria-expanded={open}
