@@ -8,7 +8,8 @@ import { Reveal } from "./reveal";
 import { Magnetic } from "./magnetic";
 import { WhatsAppIcon } from "./whatsapp-button";
 import { SpcMark } from "./logo";
-import { SERVICES, SPC, waLink } from "@/lib/spc";
+import { useLang } from "./lang";
+import { SERVICES, SPC, waLink, pick } from "@/lib/spc";
 import { cn } from "@/lib/utils";
 
 /* ——— Ciudades de entrega (los 9 departamentos + El Alto) ——— */
@@ -45,15 +46,55 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
   const [name, setName] = useState("");
   const [comments, setComments] = useState("");
   const reduce = useReducedMotion();
+  const { lang } = useLang();
 
   const service = SERVICES.find((s) => s.id === product) ?? SERVICES[0];
 
-  /* Mensaje estructurado que verá el asesor en WhatsApp */
+  const T = {
+    product: { es: "Producto", en: "Product" },
+    other: { es: "Otro proyecto (lo describo abajo)", en: "Other project (I describe it below)" },
+    qty: { es: "Cantidad aproximada", en: "Approximate quantity" },
+    qtyHint: {
+      es: "¿Cuántas unidades? Aproximado está perfecto — el asesor ajusta el tiraje óptimo.",
+      en: "How many units? An approximation is fine — the advisor fine-tunes the optimal run.",
+    },
+    qtyAria: { es: "Cantidad en unidades", en: "Quantity in units" },
+    minus: { es: "Reducir cantidad", en: "Decrease quantity" },
+    plus: { es: "Aumentar cantidad", en: "Increase quantity" },
+    date: { es: "Fecha ideal (opcional)", en: "Ideal date (optional)" },
+    city: { es: "Ciudad de entrega", en: "Delivery city" },
+    name: { es: "Nombre / Empresa (opcional)", en: "Name / Company (optional)" },
+    namePh: { es: "¿Cómo te llamas?", en: "What's your name?" },
+    comments: { es: "Comentarios (opcional)", en: "Comments (optional)" },
+    commentsPh: {
+      es: "Tamaño, material, acabados, si tienes diseño…",
+      en: "Size, material, finishes, whether you have a design…",
+    },
+    submit: { es: "CONTINUAR EN WHATSAPP", en: "CONTINUE ON WHATSAPP" },
+    submitAria: { es: "Continuar la cotización en WhatsApp", en: "Continue the quote on WhatsApp" },
+    footnote: {
+      es: "Tu cotización avanza cuando nuestro equipo te responde por WhatsApp.",
+      en: "Your quote moves forward the moment our team replies on WhatsApp.",
+    },
+    online: { es: "En línea", en: "Online" },
+    preview: {
+      es: "Vista previa en vivo · así llegará tu mensaje",
+      en: "Live preview · this is how your message will arrive",
+    },
+    replyBubble: {
+      es: (cat: string) => (<>¡Hola! 🙌 Recibimos tu proyecto de <strong className="text-white">{cat}</strong>. Un asesor te responde en minutos con la cotización.</>),
+      en: (cat: string) => (<>Hi there! 🙌 We received your <strong className="text-white">{cat}</strong> project. An advisor will reply within minutes with your quote.</>),
+    },
+    realPhoto: { es: "Fotografía real de producción SPC", en: "Real SPC production photo" },
+    suggestedRun: { es: "tiraje sugerido desde", en: "suggested run from" },
+  };
+
+  /* Mensaje estructurado (formato estable, enviado al equipo en español) */
   const message = useMemo(() => {
     const lines = [
       "Hola SPC 👋 Quiero cotizar un proyecto:",
       "",
-      `Producto: ${service.title}`,
+      `Producto: ${pick(service.title, lang)}`,
       `Cantidad: ${qty.toLocaleString("es-BO")}`,
       date ? `Fecha ideal de entrega: ${date.split("-").reverse().join("/")}` : null,
       `Ciudad de entrega: ${city}`,
@@ -63,7 +104,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
       "¡Gracias!",
     ].filter((l): l is string => l !== null);
     return lines.join("\n");
-  }, [service.title, qty, date, city, name, comments]);
+  }, [service, lang, qty, date, city, name, comments]);
 
   const step = stepFor(qty);
 
@@ -78,6 +119,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
       <Reveal>
         <form
           className="flex flex-col gap-5"
+          key={lang}
           onSubmit={(e) => {
             e.preventDefault();
             window.open(waLink(message), "_blank", "noopener,noreferrer");
@@ -87,7 +129,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
           <div>
             <label htmlFor="qf-product" className={labelCls}>
               <Package className="h-3.5 w-3.5 text-[#8FB0E8]" />
-              Producto
+              {T.product[lang]}
             </label>
             <select
               id="qf-product"
@@ -97,11 +139,11 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
             >
               {SERVICES.map((s) => (
                 <option key={s.id} value={s.id} className="bg-[#0A1428]">
-                  {s.title}
+                  {pick(s.title, lang)}
                 </option>
               ))}
               <option value="otro" className="bg-[#0A1428]">
-                Otro proyecto (lo describo abajo)
+                {T.other[lang]}
               </option>
             </select>
           </div>
@@ -110,12 +152,12 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
           <div>
             <span className={labelCls}>
               <Package className="h-3.5 w-3.5 text-[#8FB0E8]" />
-              Cantidad aproximada
+              {T.qty[lang]}
             </span>
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                aria-label="Reducir cantidad"
+                aria-label={T.minus[lang]}
                 onClick={() => setQty((q) => Math.max(1, q - step))}
                 className="btn-press flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white/[0.055] text-white/80 transition-all hover:border-white/30 hover:bg-white/[0.1] hover:text-white"
               >
@@ -124,8 +166,8 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
               <input
                 type="text"
                 inputMode="numeric"
-                aria-label="Cantidad en unidades"
-                value={qty.toLocaleString("es-BO")}
+                aria-label={T.qtyAria[lang]}
+                value={qty.toLocaleString(lang === "es" ? "es-BO" : "en-US")}
                 onChange={(e) => {
                   const n = parseInt(e.target.value.replace(/[^\d]/g, ""), 10);
                   setQty(Number.isFinite(n) && n > 0 ? Math.min(n, 10_000_000) : 1);
@@ -134,16 +176,14 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
               />
               <button
                 type="button"
-                aria-label="Aumentar cantidad"
+                aria-label={T.plus[lang]}
                 onClick={() => setQty((q) => Math.min(q + step, 10_000_000))}
                 className="btn-press flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white/[0.055] text-white/80 transition-all hover:border-white/30 hover:bg-white/[0.1] hover:text-white"
               >
                 <Plus className="h-4.5 w-4.5" />
               </button>
             </div>
-            <p className="mt-2 text-[12px] text-white/40">
-              ¿Cuántas unidades? Aproximado está perfecto — el asesor ajusta el tiraje óptimo.
-            </p>
+            <p className="mt-2 text-[12px] text-white/40">{T.qtyHint[lang]}</p>
           </div>
 
           {/* Fecha + Ciudad */}
@@ -151,7 +191,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
             <div>
               <label htmlFor="qf-date" className={labelCls}>
                 <CalendarDays className="h-3.5 w-3.5 text-[#8FB0E8]" />
-                Fecha ideal (opcional)
+                {T.date[lang]}
               </label>
               <input
                 id="qf-date"
@@ -164,7 +204,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
             <div>
               <label htmlFor="qf-city" className={labelCls}>
                 <MapPin className="h-3.5 w-3.5 text-[#8FB0E8]" />
-                Ciudad de entrega
+                {T.city[lang]}
               </label>
               <select
                 id="qf-city"
@@ -185,7 +225,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
           <div>
             <label htmlFor="qf-name" className={labelCls}>
               <User className="h-3.5 w-3.5 text-[#8FB0E8]" />
-              Nombre / Empresa (opcional)
+              {T.name[lang]}
             </label>
             <input
               id="qf-name"
@@ -193,7 +233,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
               value={name}
               maxLength={80}
               autoComplete="name"
-              placeholder="¿Cómo te llamas?"
+              placeholder={T.namePh[lang]}
               onChange={(e) => setName(e.target.value)}
               className={fieldCls}
             />
@@ -203,14 +243,14 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
           <div>
             <label htmlFor="qf-comments" className={labelCls}>
               <MessageSquareText className="h-3.5 w-3.5 text-[#8FB0E8]" />
-              Comentarios (opcional)
+              {T.comments[lang]}
             </label>
             <textarea
               id="qf-comments"
               value={comments}
               maxLength={400}
               rows={3}
-              placeholder="Tamaño, material, acabados, si tienes diseño…"
+              placeholder={T.commentsPh[lang]}
               onChange={(e) => setComments(e.target.value)}
               className={cn(fieldCls, "h-auto resize-none py-3.5 leading-relaxed")}
             />
@@ -221,15 +261,13 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
             <button
               type="submit"
               className="wa-btn btn-press group flex h-16 w-full items-center justify-center gap-3 rounded-full text-lg font-bold text-white"
-              aria-label="Continuar la cotización en WhatsApp"
+              aria-label={T.submitAria[lang]}
             >
               <WhatsAppIcon className="h-6.5 w-6.5 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110" />
-              CONTINUAR EN WHATSAPP
+              {T.submit[lang]}
             </button>
           </Magnetic>
-          <p className="text-center text-[13px] text-white/45">
-            Tu cotización avanza cuando nuestro equipo te responde por WhatsApp.
-          </p>
+          <p className="text-center text-[13px] text-white/45">{T.footnote[lang]}</p>
         </form>
       </Reveal>
 
@@ -246,12 +284,12 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
             <div className="min-w-0 flex-1">
               <p className="truncate text-[15px] font-bold text-white">{SPC.whatsapp.displayName}</p>
               <p className="text-[12px] font-medium text-[#8FB0E8]">
-                La Paz · {SPC.whatsapp.display}
+                {lang === "es" ? "La Paz" : "La Paz"} · {SPC.whatsapp.display}
               </p>
             </div>
             <span className="flex items-center gap-1.5 rounded-full border border-[#25D366]/25 bg-[#25D366]/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#4BE38A]">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#25D366]" />
-              En línea
+              {T.online[lang]}
             </span>
           </div>
 
@@ -266,7 +304,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
             }}
           >
             <p className="mx-auto mb-1 max-w-[90%] rounded-lg bg-white/[0.06] px-3 py-1.5 text-center text-[11px] font-medium text-white/50">
-              Vista previa en vivo · así llegará tu mensaje
+              {T.preview[lang]}
             </p>
 
             {/* Burbuja del usuario (verde WhatsApp) */}
@@ -275,7 +313,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
                 {message}
               </p>
               <span className="mt-1.5 flex items-center justify-end gap-1 text-[10.5px] text-white/70">
-                {new Date().toLocaleTimeString("es-BO", { hour: "2-digit", minute: "2-digit" })}
+                {new Date().toLocaleTimeString(lang === "es" ? "es-BO" : "en-US", { hour: "2-digit", minute: "2-digit" })}
                 <svg viewBox="0 0 16 12" className="h-3 w-4 fill-current" aria-hidden>
                   <path d="M12 6l-1.5 3L2 4l8.5-1z" opacity=".9" />
                   <path d="M11.2 3.4l1.3.3L14 7l-1.2 2.6-2.1-1z" />
@@ -290,9 +328,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
               transition={{ delay: 0.6 }}
               className="mr-auto max-w-[86%] rounded-2xl rounded-tl-md border border-white/8 bg-white/[0.07] px-4 py-2.5 text-[13px] leading-relaxed text-white/80"
             >
-              ¡Hola! 🙌 Recibimos tu proyecto de{" "}
-              <strong className="text-white">{service.categoryLabel.toLowerCase()}</strong>. Un
-              asesor te responde en minutos con la cotización.
+              {T.replyBubble[lang](pick(service.categoryLabel, lang).toLowerCase())}
             </motion.div>
           </div>
 
@@ -301,7 +337,7 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
             <span className="relative h-11 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10">
               <Image
                 src={service.realPhoto}
-                alt={`Producción real de ${service.title}`}
+                alt={`${T.realPhoto[lang]}: ${pick(service.title, lang)}`}
                 fill
                 sizes="64px"
                 className="object-cover"
@@ -309,11 +345,11 @@ export function QuoteForm({ preselect }: { preselect?: string }) {
             </span>
             <div className="min-w-0">
               <p className="truncate text-[12.5px] font-semibold text-white/85">
-                {service.title}
+                {pick(service.title, lang)}
               </p>
               <p className="text-[11px] text-white/45">
-                Fotografía real de producción SPC · tiraje sugerido desde{" "}
-                {service.details.specs[0]?.value.split("·")[0] ?? "—"}
+                {T.realPhoto[lang]} · {T.suggestedRun[lang]}{" "}
+                {pick(service.details, lang).specs[0]?.value.split("·")[0] ?? "—"}
               </p>
             </div>
           </div>

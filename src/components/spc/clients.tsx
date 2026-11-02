@@ -5,17 +5,18 @@ import { motion } from "framer-motion";
 import { Star, Quote, MapPin } from "lucide-react";
 import { TiltCard } from "./tilt-card";
 import { Reveal, StaggerGroup, StaggerItem } from "./reveal";
-import { CLIENTS, REVIEWS, waLink, WA_MESSAGES, type Client } from "@/lib/spc";
+import { useLang } from "./lang";
+import { CLIENTS, REVIEWS, waLink, WA_MESSAGES, pick, type Client } from "@/lib/spc";
 import { WhatsAppIcon } from "./whatsapp-button";
 import { cn } from "@/lib/utils";
 
 /* ——— Logotipo real del cliente (png / jpg / svg) ——— */
 function ClientLogo({ client }: { client: Client }) {
-  const wide = ["entel", "deber", "inti"].includes(client.id);
+  const wide = ["entel", "deber", "inti", "minedu"].includes(client.id);
   return (
     <span
       className="flex h-full w-full items-center justify-center px-5"
-      title={`${client.name} · ${client.sector}`}
+      title={`${client.name} · ${pick(client.sector, "es")}`}
     >
       <Image
         src={client.logo}
@@ -67,9 +68,9 @@ function LogoRow({ clients, reverse = false }: { clients: Client[]; reverse?: bo
 }
 
 /** Estrellas de reseña */
-function Stars({ n }: { n: number }) {
+function Stars({ n, label }: { n: number; label: string }) {
   return (
-    <span className="flex gap-1" aria-label={`${n} de 5 estrellas`}>
+    <span className="flex gap-1" aria-label={label}>
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
@@ -84,9 +85,34 @@ function Stars({ n }: { n: number }) {
  * Clientes nacionales — pared de logotipos reales + reseñas.
  */
 export function Clients() {
+  const { lang } = useLang();
   const half = Math.ceil(CLIENTS.length / 2);
   const rowA = CLIENTS.slice(0, half);
   const rowB = CLIENTS.slice(half);
+
+  const T = {
+    badge: { es: "Portafolio nacional", en: "National portfolio" },
+    headingA: { es: "Las grandes marcas de Bolivia", en: "Bolivia's biggest brands" },
+    headingB: { es: "imprimen con SPC", en: "print with SPC" },
+    intro: {
+      es: "Laboratorios, industrias de alimentos, bancos, medios, editoriales e instituciones públicas — de La Paz a Santa Cruz, confían su imagen impresa en la planta de SPC.",
+      en: "Laboratories, food companies, banks, media, publishers and public institutions — from La Paz to Santa Cruz, trust their printed image to SPC's plant.",
+    },
+    wallNote: {
+      es: "Una selección de empresas e instituciones de los sectores que atendemos en todo el país",
+      en: "A selection of companies and institutions from the sectors we serve nationwide",
+    },
+    reviewsHeadingA: { es: "Lo que dicen quienes ya", en: "What our customers" },
+    reviewsHeadingB: { es: "imprimen con nosotros", en: "already say about us" },
+    satisfaction: { es: "Satisfacción promedio", en: "Average satisfaction" },
+    ofOurClients: { es: "de nuestros clientes", en: "across our clients" },
+    starsAria: { es: "5 de 5 estrellas", en: "5 out of 5 stars" },
+    joinCta: {
+      es: "¿Tu marca será la próxima en nuestra pared? Únete a las empresas que ya imprimen con los líderes de la industria gráfica boliviana.",
+      en: "Will your brand be next on our wall? Join the companies already printing with the leaders of Bolivia's graphics industry.",
+    },
+    joinButton: { es: "Unirme a los clientes SPC", en: "Join SPC's clients" },
+  };
 
   return (
     <section
@@ -101,19 +127,18 @@ export function Clients() {
           <Reveal>
             <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#27519B]/15 bg-white/70 px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-[#27519B] backdrop-blur-sm">
               <MapPin className="h-3.5 w-3.5" />
-              Portafolio nacional
+              {T.badge[lang]}
             </p>
           </Reveal>
           <Reveal delay={0.08}>
             <h2 className="display-tight text-balance text-4xl font-extrabold tracking-tight text-[#0C1526] sm:text-5xl lg:text-[3.4rem]">
-              Las grandes marcas de Bolivia{" "}
-              <span className="font-serif font-normal italic text-[#27519B]">imprimen con SPC</span>
+              {T.headingA[lang]}{" "}
+              <span className="font-serif font-normal italic text-[#27519B]">{T.headingB[lang]}</span>
             </h2>
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mt-6 text-pretty text-lg leading-relaxed text-[#57678A]">
-              Laboratorios, industrias de alimentos, bancos, medios, editoriales e instituciones
-              públicas — de La Paz a Santa Cruz, confían su imagen impresa en la planta de SPC.
+              {T.intro[lang]}
             </p>
           </Reveal>
         </div>
@@ -124,7 +149,7 @@ export function Clients() {
             <LogoRow clients={rowA} />
             <LogoRow clients={rowB} reverse />
             <p className="mt-1 text-center text-[11.5px] font-medium text-[#8A94A6]">
-              Una selección de empresas e instituciones de los sectores que atendemos en todo el país
+              {T.wallNote[lang]}
             </p>
           </div>
         </Reveal>
@@ -135,8 +160,8 @@ export function Clients() {
             <div className="max-w-xl">
               <Reveal>
                 <h3 className="display-tight text-3xl font-extrabold tracking-tight text-[#0C1526] sm:text-4xl">
-                  Lo que dicen quienes ya{" "}
-                  <span className="font-serif font-normal italic text-[#27519B]">imprimen con nosotros</span>
+                  {T.reviewsHeadingA[lang]}{" "}
+                  <span className="font-serif font-normal italic text-[#27519B]">{T.reviewsHeadingB[lang]}</span>
                 </h3>
               </Reveal>
             </div>
@@ -144,12 +169,12 @@ export function Clients() {
               <div className="gloss-card flex items-center gap-4 rounded-3xl px-6 py-4">
                 <div className="flex items-baseline gap-1.5">
                   <span className="text-4xl font-extrabold tracking-tight text-silver-blue">5.0</span>
-                  <Stars n={5} />
+                  <Stars n={5} label={T.starsAria[lang]} />
                 </div>
                 <div className="border-l border-[#0C1526]/8 pl-4 text-[12px] leading-tight text-[#57678A]">
-                  Satisfacción promedio
+                  {T.satisfaction[lang]}
                   <br />
-                  de nuestros clientes
+                  {T.ofOurClients[lang]}
                 </div>
               </div>
             </Reveal>
@@ -157,13 +182,13 @@ export function Clients() {
 
           <StaggerGroup className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3" stagger={0.09}>
             {REVIEWS.map((r, i) => (
-              <StaggerItem key={r.name + r.role} className={i === 0 ? "md:col-span-2 lg:col-span-1" : ""}>
+              <StaggerItem key={r.name + i} className={i === 0 ? "md:col-span-2 lg:col-span-1" : ""}>
                 <TiltCard className="h-full rounded-[26px]" maxTilt={6}>
                   <motion.figure className="gloss-card relative flex h-full flex-col gap-4 rounded-[26px] p-7">
                     <Quote className="absolute right-6 top-6 h-8 w-8 text-[#27519B]/10" aria-hidden />
-                    <Stars n={r.rating} />
+                    <Stars n={r.rating} label={`${r.rating} / 5`} />
                     <blockquote className="text-pretty text-[15px] leading-relaxed text-[#2B3B5E]">
-                      “{r.quote}”
+                      “{pick(r.quote, lang)}”
                     </blockquote>
                     <figcaption className="mt-auto flex items-center gap-3.5 border-t border-[#0C1526]/8 pt-4">
                       <span
@@ -175,11 +200,11 @@ export function Clients() {
                       <div className="min-w-0">
                         <p className="truncate text-[13.5px] font-bold text-[#0C1526]">{r.name}</p>
                         <p className="truncate text-[12px] text-[#57678A]">
-                          {r.role} · {r.company}
+                          {pick(r.role, lang)} · {pick(r.company, lang)}
                         </p>
                       </div>
                       <span className="ml-auto shrink-0 rounded-full border border-[#27519B]/12 bg-white/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#3B4E77]">
-                        {r.sector}
+                        {pick(r.sector, lang)}
                       </span>
                     </figcaption>
                   </motion.figure>
@@ -193,8 +218,7 @@ export function Clients() {
         <Reveal delay={0.1}>
           <div className="mx-auto mt-14 flex max-w-2xl flex-col items-center gap-4 text-center">
             <p className="text-pretty text-[15px] leading-relaxed text-[#57678A]">
-              ¿Tu marca será la próxima en nuestra pared? Únete a las empresas que ya imprimen
-              con los líderes de la industria gráfica boliviana.
+              {T.joinCta[lang]}
             </p>
             <a
               href={waLink(WA_MESSAGES.start)}
@@ -203,7 +227,7 @@ export function Clients() {
               className="btn-press inline-flex h-12 items-center justify-center gap-2.5 rounded-full border border-[#128C7E]/25 bg-gradient-to-b from-[#25D366]/[0.09] to-[#128C7E]/[0.1] px-7 text-[14.5px] font-semibold text-[#0E7A67] transition-all duration-300 hover:border-[#25D366]/50 hover:from-[#25D366]/[0.16] hover:to-[#128C7E]/[0.18] hover:text-[#0A6B5A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
             >
               <WhatsAppIcon className="h-4.5 w-4.5" />
-              Unirme a los clientes SPC
+              {T.joinButton[lang]}
             </a>
           </div>
         </Reveal>

@@ -5,7 +5,8 @@ import { Apple, Pill, ShoppingBag, BookOpen, Landmark, ArrowUpRight, Lightbulb }
 import { TiltCard } from "./tilt-card";
 import { Reveal, StaggerGroup, StaggerItem } from "./reveal";
 import { WhatsAppIcon } from "./whatsapp-button";
-import { INDUSTRIES, waLink } from "@/lib/spc";
+import { useLang } from "./lang";
+import { INDUSTRIES, waLink, pick } from "@/lib/spc";
 
 const ICONS = {
   food: Apple,
@@ -19,6 +20,21 @@ const ICONS = {
  * Industrias servidas — educa sobre cada sector y guía al CTA.
  */
 export function Industries() {
+  const { lang } = useLang();
+
+  const T = {
+    badge: { es: "Industrias que servimos", en: "Industries we serve" },
+    headingA: { es: "Conocemos tu sector,", en: "We know your industry," },
+    headingB: { es: "hablamos tu idioma", en: "we speak your language" },
+    intro: {
+      es: "Cada industria exige algo distinto de la impresión: resistencia, trazabilidad, presencia en góndola o fecha de entrega. Dos décadas imprimiendo para los sectores que mueven Bolivia.",
+      en: "Every industry demands something different from print: durability, traceability, shelf presence or delivery dates. Two decades printing for the sectors that move Bolivia.",
+    },
+    quoteFor: { es: "Cotizar para la industria", en: "Quote for the" },
+    quoteForSuffix: { es: "por WhatsApp", en: "industry via WhatsApp" },
+    quoteLabel: { es: "Cotizar para", en: "Quote for" },
+  };
+
   return (
     <section
       id="industrias"
@@ -31,20 +47,18 @@ export function Industries() {
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
             <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#27519B]/15 bg-white/70 px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-[#27519B] backdrop-blur-sm">
-              Industrias que servimos
+              {T.badge[lang]}
             </p>
           </Reveal>
           <Reveal delay={0.08}>
             <h2 className="display-tight text-balance text-4xl font-extrabold tracking-tight text-[#0C1526] sm:text-5xl lg:text-[3.4rem]">
-              Conocemos tu sector,{" "}
-              <span className="font-serif font-normal italic text-[#27519B]">hablamos tu idioma</span>
+              {T.headingA[lang]}{" "}
+              <span className="font-serif font-normal italic text-[#27519B]">{T.headingB[lang]}</span>
             </h2>
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mt-6 text-pretty text-lg leading-relaxed text-[#57678A]">
-              Cada industria exige algo distinto de la impresión: resistencia, trazabilidad,
-              presencia en góndola o fecha de entrega. Dos décadas imprimiendo para los sectores
-              que mueven Bolivia.
+              {T.intro[lang]}
             </p>
           </Reveal>
         </div>
@@ -53,6 +67,7 @@ export function Industries() {
         <StaggerGroup className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
           {INDUSTRIES.map((ind) => {
             const Icon = ICONS[ind.icon];
+            const name = pick(ind.name, lang);
             return (
               <StaggerItem key={ind.id} className={ind.id === "instituciones" ? "sm:col-span-2 lg:col-span-1" : ""}>
                 <TiltCard className="h-full rounded-[26px]" maxTilt={7}>
@@ -62,22 +77,22 @@ export function Industries() {
                         <Icon className="h-6 w-6 text-white" />
                       </span>
                       <span className="rounded-full border border-[#27519B]/12 bg-white/70 px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#3B4E77]">
-                        {ind.name.split(" ")[0]}
+                        {name.split(" ")[0]}
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-bold tracking-tight text-[#0C1526]">{ind.name}</h3>
+                      <h3 className="text-xl font-bold tracking-tight text-[#0C1526]">{name}</h3>
                       <p className="mt-0.5 text-[13px] font-medium italic text-[#3F6CC0]">
-                        {ind.tagline}
+                        {pick(ind.tagline, lang)}
                       </p>
                       <p className="mt-3 text-pretty text-[14.5px] leading-relaxed text-[#57678A]">
-                        {ind.description}
+                        {pick(ind.description, lang)}
                       </p>
                     </div>
 
                     <ul className="flex flex-wrap gap-1.5">
-                      {ind.products.map((p) => (
+                      {pick(ind.products, lang).map((p) => (
                         <li
                           key={p}
                           className="rounded-full border border-[#27519B]/10 bg-[#27519B]/[0.05] px-2.5 py-1 text-[11.5px] font-medium text-[#3B4E77]"
@@ -90,7 +105,7 @@ export function Industries() {
                     {/* Insight educativo */}
                     <div className="mt-auto flex items-start gap-2.5 rounded-2xl border border-[#FFCF00]/35 bg-[#FFCF00]/[0.07] p-3.5">
                       <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-[#C79A00]" />
-                      <p className="text-[12.5px] leading-snug text-[#4A4426]">{ind.insight}</p>
+                      <p className="text-[12.5px] leading-snug text-[#4A4426]">{pick(ind.insight, lang)}</p>
                     </div>
 
                     <a
@@ -98,10 +113,10 @@ export function Industries() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn-press group/cta inline-flex h-11 items-center justify-center gap-2 rounded-full border border-[#128C7E]/25 bg-gradient-to-b from-[#25D366]/[0.08] to-[#128C7E]/[0.09] text-[13.5px] font-semibold text-[#0E7A67] transition-all duration-300 hover:border-[#25D366]/50 hover:from-[#25D366]/[0.15] hover:to-[#128C7E]/[0.16] hover:text-[#0A6B5A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
-                      aria-label={`Cotizar para la industria ${ind.name} por WhatsApp`}
+                      aria-label={`${T.quoteFor[lang]} ${name} ${T.quoteForSuffix[lang]}`}
                     >
                       <WhatsAppIcon className="h-4 w-4" />
-                      Cotizar para {ind.name.toLowerCase()}
+                      {T.quoteLabel[lang]} {name.toLowerCase()}
                       <ArrowUpRight className="h-3.5 w-3.5 opacity-40 transition-all duration-200 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5 group-hover/cta:opacity-90" />
                     </a>
                   </article>

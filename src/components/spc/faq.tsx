@@ -11,12 +11,43 @@ import {
 import { Reveal, StaggerGroup, StaggerItem } from "./reveal";
 import { openSpcAi } from "./hero";
 import { WhatsAppButton } from "./whatsapp-button";
-import { WA_MESSAGES, FAQS } from "@/lib/spc";
+import { useLang } from "./lang";
+import { WA_MESSAGES, FAQS, pick } from "@/lib/spc";
 
 /**
  * FAQ educativa + promo de SPenCer (recepcionista virtual con IA).
  */
 export function Faq() {
+  const { lang } = useLang();
+
+  const T = {
+    badge: { es: "Preguntas frecuentes", en: "Frequent questions" },
+    headingA: { es: "Todo lo que necesitas saber", en: "Everything you need to know" },
+    headingB: { es: "antes de imprimir", en: "before you print" },
+    intro: {
+      es: "Tirajes, plazos, archivos y cotizaciones — respuestas claras para decidir con seguridad. ¿Algo más específico? Pregunta abajo.",
+      en: "Run sizes, lead times, files and quotes — clear answers to decide with confidence. Something more specific? Ask below.",
+    },
+    aiBadge: { es: "Recepcionista virtual con IA", en: "AI virtual receptionist" },
+    meet: { es: "Conoce a", en: "Meet" },
+    spencerIntro: {
+      es: "SPenCer te guía de la idea a la cotización: responde al instante tus dudas de tirajes, plazos, materiales y precios orientativos — y cuando estás listo, te conecta por WhatsApp con un asesor. Disponible 24/7.",
+      en: "SPenCer guides you from idea to quote: instantly answers your questions about run sizes, lead times, materials and indicative prices — and when you're ready, connects you with an advisor on WhatsApp. Available 24/7.",
+    },
+    chat: { es: "Chatear con SPenCer", en: "Chat with SPenCer" },
+    chips: {
+      es: ["¿Cuánto cuesta imprimir 500 revistas?", "¿Hacen bolsas de papel?", "¿Cuál es el tiraje mínimo?"],
+      en: ["How much does it cost to print 500 magazines?", "Do you make paper bags?", "What's the minimum run?"],
+    },
+    openAi: {
+      es: "Abrir chat de SPenCer, la recepcionista virtual con IA",
+      en: "Open SPenCer chat, the AI virtual receptionist",
+    },
+    humanTitle: { es: "¿Prefieres una persona?", en: "Prefer a person?" },
+    humanSub: { es: "Un asesor real, en minutos", en: "A real advisor, in minutes" },
+    humanCta: { es: "Hablar con un asesor", en: "Talk to an advisor" },
+  };
+
   return (
     <section id="faq" className="relative overflow-hidden bg-background py-24 sm:py-32">
       <div className="pointer-events-none absolute -left-40 bottom-24 h-[420px] w-[420px] rounded-full bg-[#27519B]/[0.06] blur-[110px]" />
@@ -28,28 +59,27 @@ export function Faq() {
             <Reveal>
               <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#27519B]/15 bg-[#27519B]/[0.06] px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-[#27519B]">
                 <MessageCircleQuestion className="h-3.5 w-3.5" />
-                Preguntas frecuentes
+                {T.badge[lang]}
               </p>
             </Reveal>
             <Reveal delay={0.08}>
               <h2 className="display-tight text-balance text-4xl font-extrabold tracking-tight text-[#0C1526] sm:text-5xl">
-                Todo lo que necesitas saber{" "}
-                <span className="font-serif font-normal italic text-[#27519B]">antes de imprimir</span>
+                {T.headingA[lang]}{" "}
+                <span className="font-serif font-normal italic text-[#27519B]">{T.headingB[lang]}</span>
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
               <p className="mt-6 max-w-lg text-pretty text-lg leading-relaxed text-[#57678A]">
-                Tirajes, plazos, archivos y cotizaciones — respuestas claras para decidir con
-                seguridad. ¿Algo más específico? Pregunta abajo.
+                {T.intro[lang]}
               </p>
             </Reveal>
 
             <StaggerGroup className="mt-10" stagger={0.06}>
               <Accordion type="single" collapsible className="w-full">
                 {FAQS.map((f, i) => (
-                  <StaggerItem key={f.q}>
+                  <StaggerItem key={i}>
                     <AccordionItem
-                      value={`faq-${i}`}
+                      value={`faq-${i}-${lang}`}
                       className="rounded-2xl border-none px-0 [&:last-child]:border-b-0"
                     >
                       <AccordionTrigger className="group rounded-2xl px-5 py-4 text-left text-[16px] font-semibold text-[#0C1526] transition-colors hover:bg-[#27519B]/[0.045] hover:no-underline data-[state=open]:bg-[#27519B]/[0.06] [&[data-state=open]>svg]:rotate-180">
@@ -57,11 +87,11 @@ export function Faq() {
                           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#27519B]/[0.09] text-[12px] font-extrabold text-[#27519B]">
                             {i + 1}
                           </span>
-                          {f.q}
+                          {pick(f.q, lang)}
                         </span>
                       </AccordionTrigger>
                       <AccordionContent className="px-5 pb-5 pt-1 text-[14.5px] leading-relaxed text-[#57678A]">
-                        {f.a}
+                        {pick(f.a, lang)}
                       </AccordionContent>
                     </AccordionItem>
                   </StaggerItem>
@@ -80,7 +110,7 @@ export function Faq() {
                 whileHover={{ y: -3 }}
                 transition={{ type: "spring", stiffness: 260, damping: 22 }}
                 className="gloss-card group relative w-full overflow-hidden rounded-[28px] p-8 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#27519B]/60"
-                aria-label="Abrir chat de SPenCer, la recepcionista virtual con IA"
+                aria-label={T.openAi[lang]}
               >
                 {/* halo animado */}
                 <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#3F6CC0]/[0.14] blur-[50px] transition-opacity duration-500 group-hover:opacity-100" />
@@ -97,18 +127,16 @@ export function Faq() {
                   </span>
                   <div>
                     <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-[#3F6CC0]">
-                      Recepcionista virtual con IA
+                      {T.aiBadge[lang]}
                     </p>
                     <h3 className="display-tight mt-1.5 text-[1.7rem] font-extrabold tracking-tight text-[#0C1526]">
-                      Conoce a <span className="text-silver-blue">SPenCer</span>
+                      {T.meet[lang]} <span className="text-silver-blue">SPenCer</span>
                     </h3>
                     <p className="mt-2.5 text-pretty text-[14px] leading-relaxed text-[#57678A]">
-                      SPenCer te guía de la idea a la cotización: responde al instante tus dudas de
-                      tirajes, plazos, materiales y precios orientativos — y cuando estás listo,
-                      te conecta por WhatsApp con un asesor. Disponible 24/7.
+                      {T.spencerIntro[lang]}
                     </p>
                     <span className="btn-press mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-gradient-to-r from-[#3F6CC0] to-[#27519B] px-5 text-[14px] font-semibold text-white shadow-[0_12px_26px_-10px_rgba(39,81,155,0.65)]">
-                      Chatear con SPenCer
+                      {T.chat[lang]}
                       <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                     </span>
                   </div>
@@ -116,16 +144,14 @@ export function Faq() {
 
                 {/* chips de ejemplo */}
                 <div className="mt-6 flex flex-wrap gap-2">
-                  {["¿Cuánto cuesta imprimir 500 revistas?", "¿Hacen bolsas de papel?", "¿Cuál es el tiraje mínimo?"].map(
-                    (q) => (
-                      <span
-                        key={q}
-                        className="rounded-full border border-[#27519B]/12 bg-white/75 px-3 py-1.5 text-[11.5px] font-medium text-[#3B4E77]"
-                      >
-                        “{q}”
-                      </span>
-                    )
-                  )}
+                  {T.chips[lang].map((q) => (
+                    <span
+                      key={q}
+                      className="rounded-full border border-[#27519B]/12 bg-white/75 px-3 py-1.5 text-[11.5px] font-medium text-[#3B4E77]"
+                    >
+                      “{q}”
+                    </span>
+                  ))}
                 </div>
               </motion.button>
             </Reveal>
@@ -141,12 +167,12 @@ export function Faq() {
                     </svg>
                   </span>
                   <div>
-                    <p className="text-[15px] font-bold text-[#0C1526]">¿Prefieres una persona?</p>
-                    <p className="text-[12.5px] text-[#57678A]">Un asesor real, en minutos</p>
+                    <p className="text-[15px] font-bold text-[#0C1526]">{T.humanTitle[lang]}</p>
+                    <p className="text-[12.5px] text-[#57678A]">{T.humanSub[lang]}</p>
                   </div>
                 </div>
                 <WhatsAppButton message={WA_MESSAGES.general} size="md" className="w-full">
-                  Hablar con un asesor
+                  {T.humanCta[lang]}
                 </WhatsAppButton>
               </div>
             </Reveal>

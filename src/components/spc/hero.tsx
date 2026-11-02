@@ -8,7 +8,8 @@ import { WhatsAppButton } from "./whatsapp-button";
 import { ServicesCarousel } from "./services-carousel";
 import { CountUp } from "./count-up";
 import { Magnetic } from "./magnetic";
-import { WA_MESSAGES, SPC } from "@/lib/spc";
+import { WA_MESSAGES, SPC, pick } from "@/lib/spc";
+import { useLang } from "./lang";
 
 /** Revelado palabra por palabra — spring + blur, estilo keynote */
 const wordContainer: Variants = {
@@ -77,6 +78,39 @@ export function openSpcAi() {
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+  const { lang } = useLang();
+
+  const T = {
+    badge: {
+      es: `Líderes de la industria gráfica en Bolivia · desde ${SPC.founded}`,
+      en: `Leaders of Bolivia's graphics industry · since ${SPC.founded}`,
+    },
+    h1a: { es: "Imprimiendo", en: "Printing" },
+    h1b: { es: "lo mejor", en: "the best" },
+    h1c: { es: "de Bolivia", en: "of Bolivia" },
+    sub: {
+      es: "Packaging, impresión comercial y digital con tecnología de punta, insumos de primera calidad y el factor humano que marca la diferencia.",
+      en: "Packaging, commercial and digital printing with cutting-edge technology, first-class supplies and the human factor that makes the difference.",
+    },
+    ctaWa: { es: "Cotiza tu proyecto por WhatsApp", en: "Quote your project on WhatsApp" },
+    ctaExplore: { es: "Explorar productos", en: "Explore products" },
+    spencerAsk: { es: "¿Dudas? Pregunta a", en: "Questions? Ask" },
+    new: { es: "nuevo", en: "new" },
+    stats: {
+      es: [
+        { v: 24, suffix: "+", l: "años de trayectoria" },
+        { v: 9, suffix: "", l: "líneas de producto" },
+        { v: 3, suffix: "", l: "grandes tecnologías" },
+      ],
+      en: [
+        { v: 24, suffix: "+", l: "years of track record" },
+        { v: 9, suffix: "", l: "product lines" },
+        { v: 3, suffix: "", l: "core technologies" },
+      ],
+    },
+    scroll: { es: "Descubre SPC", en: "Discover SPC" },
+    scrollAria: { es: "Bajar a la siguiente sección", en: "Scroll to the next section" },
+  };
 
   // Parallax de scroll: fondo zoom, contenido sube
   const { scrollYProgress } = useScroll({
@@ -93,13 +127,17 @@ export function Hero() {
       id="inicio"
       ref={sectionRef}
       className="grain relative flex min-h-[100svh] items-center overflow-hidden bg-[#0A1428]"
-      aria-label="SPC — Imprimiendo lo mejor de Bolivia"
+      aria-label={pick(SPC.slogan, lang)}
     >
       {/* Fondo cinematográfico */}
       <motion.div style={reduce ? undefined : { y: bgY, scale: bgScale }} className="absolute inset-0">
         <Image
           src="/spc/hero-roller.png"
-          alt="Rodillos de impresión offset de precisión en la planta de SPC"
+          alt={
+            lang === "es"
+              ? "Rodillos de impresión offset de precisión en la planta de SPC"
+              : "Precision offset printing rollers at SPC's plant"
+          }
           fill
           priority
           sizes="100vw"
@@ -126,8 +164,8 @@ export function Hero() {
         style={reduce ? undefined : { y: contentY, opacity: contentOpacity }}
         className="relative z-10 mx-auto grid w-full max-w-6xl gap-10 px-5 pb-24 pt-32 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-6 lg:pt-36"
       >
-        {/* ——— Columna de texto ——— */}
-        <div className="lg:pr-4">
+        {/* ——— Columna de texto (re-anima al cambiar idioma) ——— */}
+        <div className="lg:pr-4" key={lang}>
           <motion.div
             initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -135,18 +173,16 @@ export function Hero() {
             className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.07] px-4 py-2 backdrop-blur-md"
           >
             <CmykDots />
-            <span className="text-[13px] font-medium tracking-wide text-white/85">
-              Líderes de la industria gráfica en Bolivia · desde {SPC.founded}
-            </span>
+            <span className="text-[13px] font-medium tracking-wide text-white/85">{T.badge[lang]}</span>
           </motion.div>
 
           <h1 className="display-tight text-[13vw] font-extrabold text-white sm:text-6xl lg:text-[4.1rem] xl:text-[4.6rem]">
-            <RevealWords text="Imprimiendo" />
+            <RevealWords text={T.h1a[lang]} />
             <br />
             <span className="font-serif font-normal italic tracking-[-0.02em]">
-              <RevealWords text="lo mejor" />
+              <RevealWords text={T.h1b[lang]} />
             </span>{" "}
-            <RevealWords text="de Bolivia" wordClassName="text-silver" />
+            <RevealWords text={T.h1c[lang]} wordClassName="text-silver" />
           </h1>
 
           <motion.p
@@ -155,8 +191,7 @@ export function Hero() {
             transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.85 }}
             className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-white/70 sm:text-xl"
           >
-            Packaging, impresión comercial y digital con tecnología de punta,
-            insumos de primera calidad y el factor humano que marca la diferencia.
+            {T.sub[lang]}
           </motion.p>
 
           {/* CTAs del funnel */}
@@ -168,7 +203,7 @@ export function Hero() {
           >
             <Magnetic strength={0.22}>
               <WhatsAppButton message={WA_MESSAGES.start} size="lg" className="w-full sm:w-auto">
-                Cotiza tu proyecto por WhatsApp
+                {T.ctaWa[lang]}
               </WhatsAppButton>
             </Magnetic>
             <a
@@ -176,7 +211,7 @@ export function Hero() {
               className="btn-press inline-flex h-14 items-center justify-center gap-2.5 rounded-full border border-white/20 bg-white/[0.08] px-8 text-base font-semibold text-white backdrop-blur-md transition-all duration-300 hover:border-white/40 hover:bg-white/[0.14] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60"
             >
               <Layers className="h-5 w-5" />
-              Explorar productos
+              {T.ctaExplore[lang]}
             </a>
           </motion.div>
 
@@ -193,9 +228,9 @@ export function Hero() {
               <Sparkles className="h-4 w-4 text-white" />
             </span>
             <span className="inline-flex items-center gap-1.5">
-              ¿Dudas? Pregunta a <strong className="font-bold text-white">SPenCer</strong>
+              {T.spencerAsk[lang]} <strong className="font-bold text-white">SPenCer</strong>
               <span className="rounded-full bg-[#25D366]/15 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-[#4BE38A]">
-                nuevo
+                {T.new[lang]}
               </span>
             </span>
           </motion.button>
@@ -207,11 +242,7 @@ export function Hero() {
             transition={{ type: "spring", stiffness: 100, damping: 20, delay: 1.3 }}
             className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4"
           >
-            {[
-              { v: 24, suffix: "+", l: "años de trayectoria" },
-              { v: 9, suffix: "", l: "líneas de producto" },
-              { v: 3, suffix: "", l: "grandes tecnologías" },
-            ].map((s) => (
+            {T.stats[lang].map((s) => (
               <div key={s.l} className="flex items-baseline gap-2.5">
                 <dt className="sr-only">{s.l}</dt>
                 <dd className="text-3xl font-bold tracking-tight text-white">
@@ -241,9 +272,9 @@ export function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1.7, duration: 0.8 }}
         className="absolute bottom-7 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-white/50 transition-colors hover:text-white/90 sm:flex"
-        aria-label="Bajar a la siguiente sección"
+        aria-label={T.scrollAria[lang]}
       >
-        <span className="text-[11px] font-medium uppercase tracking-[0.22em]">Descubre SPC</span>
+        <span className="text-[11px] font-medium uppercase tracking-[0.22em]">{T.scroll[lang]}</span>
         <motion.span
           animate={reduce ? undefined : { y: [0, 6, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}

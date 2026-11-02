@@ -5,7 +5,8 @@ import { useEffect, useRef } from "react";
 import { motion, useInView, useReducedMotion, useMotionValue, useTransform, animate } from "framer-motion";
 import { HeartHandshake, Target, Eye, MapPin, ArrowRight } from "lucide-react";
 import { Reveal, StaggerGroup, StaggerItem } from "./reveal";
-import { SPC } from "@/lib/spc";
+import { SPC, pick } from "@/lib/spc";
+import { useLang } from "./lang";
 import { useRouter } from "./site-router";
 
 /** Contador animado con spring — se activa al entrar en viewport */
@@ -38,6 +39,41 @@ function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
 export function About() {
   const years = new Date().getFullYear() - SPC.founded;
   const router = useRouter();
+  const { lang } = useLang();
+
+  const T = {
+    badge: { es: "Quiénes somos", en: "Who we are" },
+    heading: { es: "El factor humano marca la diferencia.", en: "The human factor makes the difference." },
+    headingA: { es: "El", en: "The" },
+    headingB: { es: "factor humano", en: "human factor" },
+    headingC: { es: "marca la diferencia.", en: "makes the difference." },
+    intro: {
+      es: (<>fue fundada en la ciudad de La Paz el año <strong className="font-semibold text-[#0C1526]">{SPC.founded}</strong>. Somos una empresa <strong className="font-semibold text-[#0C1526]">líder en la industria gráfica de Bolivia</strong>, con personal altamente calificado, infraestructura de primer nivel y una convicción: nuestro equipo es el pilar de todo lo que imprimimos.</>),
+      en: (<>was founded in the city of La Paz in <strong className="font-semibold text-[#0C1526]">{SPC.founded}</strong>. We are a company <strong className="font-semibold text-[#0C1526]">leading Bolivia's graphics industry</strong>, with highly qualified staff, first-class infrastructure and one conviction: our team is the pillar of everything we print.</>),
+    },
+    stats: {
+      es: [
+        { v: <Counter to={years} suffix="+" />, l: "años imprimiendo Bolivia" },
+        { v: <Counter to={9} />, l: "líneas de producto" },
+        { v: <Counter to={100} suffix="%" />, l: "personal calificado" },
+        { v: <Counter to={1} />, l: "equipo, una sola misión" },
+      ],
+      en: [
+        { v: <Counter to={years} suffix="+" />, l: "years printing Bolivia" },
+        { v: <Counter to={9} />, l: "product lines" },
+        { v: <Counter to={100} suffix="%" />, l: "qualified staff" },
+        { v: <Counter to={1} />, l: "team, one mission" },
+      ],
+    },
+    mission: { es: "Nuestra misión", en: "Our mission" },
+    missionFoot: { es: "Servicios integrales, orientados a ti", en: "Comprehensive services, oriented to you" },
+    vision: { es: "Nuestra visión", en: "Our vision" },
+    bannerAlt: {
+      es: "Muestra de impresión a todo color con imágenes de Bolivia y abanico de color",
+      en: "Full-color print sample with images of Bolivia and a fan of color",
+    },
+    history: { es: "Conoce nuestra historia completa", en: "Read our full story" },
+  };
 
   return (
     <section id="nosotros" className="relative overflow-hidden bg-background py-24 sm:py-32">
@@ -51,35 +87,27 @@ export function About() {
           <Reveal>
             <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#27519B]/15 bg-[#27519B]/[0.06] px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-[#27519B]">
               <MapPin className="h-3.5 w-3.5" />
-              Quiénes somos
+              {T.badge[lang]}
             </p>
           </Reveal>
           <Reveal delay={0.08}>
             <h2 className="display-tight text-balance text-4xl font-extrabold tracking-tight text-[#0C1526] sm:text-5xl lg:text-[3.4rem]">
-              El{" "}
-              <span className="font-serif font-normal italic text-[#27519B]">factor humano</span>{" "}
-              marca la diferencia.
+              {T.headingA[lang]}{" "}
+              <span className="font-serif font-normal italic text-[#27519B]">{T.headingB[lang]}</span>{" "}
+              {T.headingC[lang]}
             </h2>
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-[#57678A]">
-              {SPC.name} fue fundada en la ciudad de La Paz el año{" "}
-              <strong className="font-semibold text-[#0C1526]">{SPC.founded}</strong>. Somos una
-              empresa <strong className="font-semibold text-[#0C1526]">líder en la industria gráfica de Bolivia</strong>,
-              con personal altamente calificado, infraestructura de primer nivel y una convicción:
-              nuestro equipo es el pilar de todo lo que imprimimos.
+              <strong className="font-semibold text-[#0C1526]">{SPC.name}</strong>{" "}
+              {T.intro[lang]}
             </p>
           </Reveal>
         </div>
 
         {/* Stats en banda glossy */}
         <StaggerGroup className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4" stagger={0.09}>
-          {[
-            { v: <Counter to={years} suffix="+" />, l: "años imprimiendo Bolivia" },
-            { v: <Counter to={9} />, l: "líneas de producto" },
-            { v: <Counter to={100} suffix="%" />, l: "personal calificado" },
-            { v: <Counter to={1} />, l: "equipo, una sola misión" },
-          ].map((s, i) => (
+          {T.stats[lang].map((s, i) => (
             <StaggerItem key={i}>
               <div className="gloss-card flex h-full flex-col items-start gap-1 rounded-3xl p-6">
                 <p className="text-4xl font-extrabold tracking-tight text-silver-blue sm:text-[2.6rem]">
@@ -99,14 +127,14 @@ export function About() {
                 <Target className="h-5.5 w-5.5 text-white" />
               </span>
               <div>
-                <h3 className="text-2xl font-bold tracking-tight text-[#0C1526]">Nuestra misión</h3>
+                <h3 className="text-2xl font-bold tracking-tight text-[#0C1526]">{T.mission[lang]}</h3>
                 <p className="mt-3 text-pretty text-lg leading-relaxed text-[#57678A]">
-                  “{SPC.mission}”
+                  “{pick(SPC.mission, lang)}”
                 </p>
               </div>
               <div className="mt-auto flex items-center gap-2 border-t border-[#0C1526]/8 pt-5 text-[13px] font-medium text-[#27519B]">
                 <HeartHandshake className="h-4 w-4" />
-                Servicios integrales, orientados a ti
+                {T.missionFoot[lang]}
               </div>
             </div>
           </Reveal>
@@ -120,7 +148,7 @@ export function About() {
               >
                 <Image
                   src="/spc/banner-color.jpg"
-                  alt="Muestra de impresión a todo color con imágenes de Bolivia y abanico de color"
+                  alt={T.bannerAlt[lang]}
                   fill
                   sizes="(max-width: 1024px) 100vw, 560px"
                   className="object-cover"
@@ -130,10 +158,10 @@ export function About() {
               <div className="absolute inset-x-0 bottom-0 p-8 sm:p-10">
                 <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-[13px] font-semibold text-white backdrop-blur-md">
                   <Eye className="h-3.5 w-3.5" />
-                  Nuestra visión
+                  {T.vision[lang]}
                 </span>
                 <p className="max-w-md text-pretty text-xl font-medium leading-relaxed text-white">
-                  “{SPC.vision}”
+                  “{pick(SPC.vision, lang)}”
                 </p>
               </div>
             </div>
@@ -147,7 +175,7 @@ export function About() {
             onClick={() => router.navigate({ name: "about" })}
             className="btn-press group mx-auto mt-10 flex items-center gap-2.5 rounded-full border border-[#27519B]/20 bg-white/70 px-6 py-3 text-[14.5px] font-semibold text-[#27519B] transition-all duration-300 hover:border-[#27519B]/45 hover:bg-[#27519B]/[0.06]"
           >
-            Conoce nuestra historia completa
+            {T.history[lang]}
             <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </button>
         </Reveal>

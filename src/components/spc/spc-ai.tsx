@@ -5,7 +5,8 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { X, Send, Sparkles, Bot, User } from "lucide-react";
 import { WhatsAppIcon } from "./whatsapp-button";
 import { SpcMark } from "./logo";
-import { waLink, WA_MESSAGES, FAQS } from "@/lib/spc";
+import { useLang } from "./lang";
+import { waLink, WA_MESSAGES, FAQS, pick } from "@/lib/spc";
 import { cn } from "@/lib/utils";
 
 interface ChatMsg {
@@ -14,10 +15,10 @@ interface ChatMsg {
   cta?: { label: string; waMessage: string };
 }
 
-const WELCOME: ChatMsg = {
-  role: "ai",
-  text: "¡Hola! 👋 Soy SPenCer, la recepcionista virtual de SPC Impresores. Te acompaño de la idea a la cotización: pregúntame por servicios, tirajes, plazos, materiales — o dime qué necesitas imprimir y te guío paso a paso.",
-};
+const WELCOME = {
+  es: "¡Hola! 👋 Soy SPenCer, la recepcionista virtual de SPC Impresores. Te acompaño de la idea a la cotización: pregúntame por servicios, tirajes, plazos, materiales — o dime qué necesitas imprimir y te guío paso a paso.",
+  en: "Hi! 👋 I'm SPenCer, the virtual receptionist of SPC Impresores. I'll walk you from idea to quote: ask me about services, run sizes, lead times, materials — or tell me what you need printed and I'll guide you step by step.",
+} as const;
 
 /**
  * SPenCer — recepcionista virtual con IA (backend: /api/spc-ai).
@@ -27,13 +28,19 @@ const WELCOME: ChatMsg = {
 export function SpcAi() {
   const [open, setOpen] = useState(false);
   const [hint, setHint] = useState(false);
-  const [messages, setMessages] = useState<ChatMsg[]>([WELCOME]);
+  const [messages, setMessages] = useState<ChatMsg[]>([{ role: "ai", text: WELCOME.es }]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const sessionRef = useRef<string>("");
   const reduce = useReducedMotion();
+  const { lang } = useLang();
+
+  /* Reinicia el saludo cuando cambia el idioma (solo si aún no hay conversación) */
+  useEffect(() => {
+    setMessages((m) => (m.length <= 1 ? [{ role: "ai", text: WELCOME[lang] }] : m));
+  }, [lang]);
 
   /* sesión anónima por visita */
   useEffect(() => {
@@ -97,7 +104,7 @@ export function SpcAi() {
       const res = await fetch("/api/spc-ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId: sessionRef.current, message: q }),
+        body: JSON.stringify({ sessionId: sessionRef.current, message: q, lang }),
       });
       const data = await res.json();
       if (!res.ok || !data?.reply) throw new Error(data?.error ?? "Respuesta inválida");
@@ -110,17 +117,23 @@ export function SpcAi() {
         ...m,
         {
           role: "ai",
-          text: "Uy, tuve una interferencia técnica 😅 Mientras la resuelvo, mi colega humano te atiende al instante:",
-          cta: { label: "Hablar con un asesor", waMessage: WA_MESSAGES.general },
+          text:
+            lang === "es"
+              ? "Uy, tuve una interferencia técnica 😅 Mientras la resuelvo, mi colega humano te atiende al instante:"
+              : "Oops, I hit a technical glitch 😅 While I fix it, my human colleague will help you right away:",
+          cta: {
+            label: lang === "es" ? "Hablar con un asesor" : "Talk to an advisor",
+            waMessage: WA_MESSAGES.general,
+          },
         },
       ]);
     } finally {
       setBusy(false);
       setTimeout(() => inputRef.current?.focus(), 120);
     }
-  }, [busy]);
+  }, [busy, lang]);
 
-  const quickChips = FAQS.slice(0, 4).map((f) => f.q);
+  const quickChips = FAQS.slice(0, 4).map((f) => pick(f.q, lang));
 
   return (
     <>
@@ -135,7 +148,7 @@ export function SpcAi() {
             transition={{ type: "spring", stiffness: 280, damping: 26 }}
             style={{ transformOrigin: "bottom right" }}
             role="dialog"
-            aria-label="Chat con SPenCer, recepcionista virtual"
+            aria-label={lang === "es" ? "Chat con SPenCer, recepcionista virtual" : "Chat with SPenCer, virtual receptionist"}
             className="fixed bottom-[8.75rem] right-3 z-[60] flex max-h-[min(66vh,560px)] w-[min(92vw,388px)] flex-col overflow-hidden rounded-[26px] border border-[#27519B]/15 bg-[#F6F9FE] shadow-[0_44px_90px_-22px_rgba(10,20,40,0.55)] sm:bottom-[9.25rem] sm:right-6"
           >
             {/* Header — identidad SPenCer */}
@@ -159,13 +172,13 @@ export function SpcAi() {
                     </span>
                   </p>
                   <p className="text-[11.5px] font-medium text-white/70">
-                    Recepcionista virtual · te guía a tu cotización · 24/7
+                    {lang === "es" ? "Recepcionista virtual · te guía a tu cotización · 24/7" : "Virtual receptionist · guides you to your quote · 24/7"}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  aria-label="Cerrar chat de SPenCer"
+                  aria-label={lang === "es" ? "Cerrar chat de SPenCer" : "Close SPenCer chat"}
                   className="btn-press flex h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white"
                 >
                   <X className="h-5 w-5" />
@@ -253,7 +266,7 @@ export function SpcAi() {
               {!busy && messages.length <= 1 && (
                 <div className="mt-1 flex flex-col gap-2">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8A94A6]">
-                    Preguntas frecuentes
+                    {lang === "es" ? "Preguntas frecuentes" : "Frequent questions"}
                   </p>
                   {quickChips.map((q, i) => (
                     <motion.button
@@ -289,14 +302,14 @@ export function SpcAi() {
                 autoComplete="off"
                 maxLength={500}
                 disabled={busy}
-                placeholder="Escribe tu pregunta…"
-                aria-label="Escribe tu pregunta para SPenCer"
+                placeholder={lang === "es" ? "Escribe tu pregunta…" : "Type your question…"}
+                aria-label={lang === "es" ? "Escribe tu pregunta para SPenCer" : "Type your question for SPenCer"}
                 className="h-11 min-w-0 flex-1 rounded-full bg-[#EFF3FA] px-4.5 text-[14px] text-[#0C1526] outline-none ring-[#3F6CC0]/50 transition-shadow placeholder:text-[#8A94A6] focus:ring-2 disabled:opacity-60"
               />
               <button
                 type="submit"
                 disabled={busy || !input.trim()}
-                aria-label="Enviar pregunta"
+                aria-label={lang === "es" ? "Enviar pregunta" : "Send question"}
                 className="btn-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-b from-[#3F6CC0] to-[#27519B] text-white shadow-[0_8px_18px_-6px_rgba(39,81,155,0.7)] transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
               >
                 <Send className="h-4.5 w-4.5 -translate-x-[1px]" />
@@ -304,7 +317,9 @@ export function SpcAi() {
             </form>
 
             <p className="bg-white pb-2.5 text-center text-[10.5px] text-[#8A94A6]">
-              SPenCer puede equivocarse. Para información oficial, contacta a un asesor.
+              {lang === "es"
+                ? "SPenCer puede equivocarse. Para información oficial, contacta a un asesor."
+                : "SPenCer can make mistakes. For official information, contact an advisor."}
             </p>
           </motion.div>
         )}
@@ -319,7 +334,7 @@ export function SpcAi() {
           setHint(false);
           if (next) window.dispatchEvent(new CustomEvent("widget:opened", { detail: "ai" }));
         }}
-        aria-label={open ? "Cerrar chat de SPenCer" : "Abrir chat de SPenCer, recepcionista virtual"}
+        aria-label={open ? (lang === "es" ? "Cerrar chat de SPenCer" : "Close SPenCer chat") : lang === "es" ? "Abrir chat de SPenCer, recepcionista virtual" : "Open SPenCer chat, virtual receptionist"}
         aria-expanded={open}
         initial={{ scale: 0, rotate: 30 }}
         animate={{ scale: 1, rotate: 0 }}
@@ -371,7 +386,7 @@ export function SpcAi() {
             exit={{ opacity: 0, x: 8 }}
             className="glass-dark absolute right-[calc(100%+10px)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full px-4 py-2 text-[12.5px] font-semibold text-white"
           >
-            ✨ Hola, soy SPenCer — ¿dudas?
+            {lang === "es" ? "✨ Hola, soy SPenCer — ¿dudas?" : "✨ Hi, I'm SPenCer — questions?"}
           </motion.span>
         )}
       </motion.button>

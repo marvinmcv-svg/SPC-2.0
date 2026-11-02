@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { SERVICES } from "@/lib/spc";
+import { SERVICES, pick } from "@/lib/spc";
+import { useLang } from "./lang";
 import { WhatsAppButton } from "./whatsapp-button";
 import { useRouter } from "./site-router";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,19 @@ export function ServicesCarousel() {
   const dragRef = useRef<{ x: number; t: number } | null>(null);
   const reduce = useReducedMotion();
   const router = useRouter();
+  const { lang } = useLang();
+
+  const T = {
+    group: { es: "Servicios de SPC", en: "SPC services" },
+    carousel: { es: "carrusel", en: "carousel" },
+    serviceOf: { es: "Servicio", en: "Service" },
+    of: { es: "de", en: "of" },
+    quote: { es: "Cotizar", en: "Quote" },
+    viewPage: { es: "Ver página del servicio →", en: "View service page →" },
+    prev: { es: "Servicio anterior", en: "Previous service" },
+    next: { es: "Servicio siguiente", en: "Next service" },
+    goTo: { es: "Ir a servicio", en: "Go to service" },
+  };
 
   function openService(id: string) {
     router.navigate({ name: "service", id });
@@ -80,6 +94,7 @@ export function ServicesCarousel() {
   };
 
   const service = SERVICES[active];
+  const title = pick(service.title, lang);
 
   /* Tinte del glow según categoría */
   const glow = useMemo(
@@ -106,8 +121,8 @@ export function ServicesCarousel() {
         className="relative mx-auto h-[290px] w-full touch-pan-y sm:h-[330px] lg:h-[350px] [mask-image:linear-gradient(90deg,transparent_0%,#000_14%,#000_86%,transparent_100%)]"
         style={{ perspective: "1500px" }}
         role="group"
-        aria-roledescription="carrusel"
-        aria-label="Servicios de SPC"
+        aria-roledescription={T.carousel[lang]}
+        aria-label={T.group[lang]}
       >
         <div
           className="absolute inset-0 cursor-grab [transform-style:preserve-3d] [transform:rotateX(-3deg)] [active:cursor-grabbing]"
@@ -125,7 +140,7 @@ export function ServicesCarousel() {
               <article
                 key={s.id}
                 aria-hidden={!front}
-                aria-label={`${s.title} (${i + 1} de ${N})`}
+                aria-label={`${pick(s.title, lang)} (${i + 1} ${T.of[lang]} ${N})`}
                 className={cn(
                   "gloss-card gloss-dark absolute left-1/2 top-1/2 overflow-hidden rounded-[24px]",
                   front && "cursor-pointer"
@@ -163,12 +178,12 @@ export function ServicesCarousel() {
                       "absolute left-4 top-4 rounded-full border border-white/35 bg-white/20 px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur-md"
                     )}
                   >
-                    {s.categoryLabel}
+                    {pick(s.categoryLabel, lang)}
                   </span>
                   <div className="absolute inset-x-0 bottom-0 p-4">
-                    <p className="text-[15px] font-bold leading-tight text-white">{s.title}</p>
+                    <p className="text-[15px] font-bold leading-tight text-white">{pick(s.title, lang)}</p>
                     <p className="mt-1 line-clamp-2 text-[11.5px] leading-snug text-white/65">
-                      {s.highlights.join(" · ")}
+                      {pick(s.highlights, lang).join(" · ")}
                     </p>
                   </div>
                 </div>
@@ -190,7 +205,7 @@ export function ServicesCarousel() {
       <div className="relative mt-8 min-h-[168px] sm:min-h-[150px]">
         <AnimatePresence mode="wait">
           <motion.div
-            key={service.id}
+            key={service.id + lang}
             initial={{ opacity: 0, y: 14, filter: "blur(8px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: -10, filter: "blur(8px)" }}
@@ -203,25 +218,25 @@ export function ServicesCarousel() {
                   className="h-1.5 w-1.5 rounded-full"
                   style={{ background: glow.replace(/0\.\d+\)/, "1)") }}
                 />
-                Servicio {active + 1} de {N} · {service.categoryLabel}
+                {T.serviceOf[lang]} {active + 1} {T.of[lang]} {N} · {pick(service.categoryLabel, lang)}
               </span>
             </div>
             <h3 className="display-tight mt-3 text-2xl font-extrabold text-white sm:text-[1.7rem]">
-              {service.title}
+              {title}
             </h3>
             <p className="mx-auto mt-2 max-w-md text-pretty text-[14px] leading-relaxed text-white/60">
-              {service.description}
+              {pick(service.description, lang)}
             </p>
             <div className="mt-5 flex flex-col items-center gap-2.5 sm:flex-row">
               <WhatsAppButton message={service.message} size="sm">
-                Cotizar {service.title.toLowerCase()}
+                {T.quote[lang]} {title.toLowerCase()}
               </WhatsAppButton>
               <button
                 type="button"
                 onClick={() => openService(service.id)}
                 className="btn-press inline-flex h-10 items-center justify-center rounded-full border border-white/20 bg-white/[0.08] px-5 text-[13px] font-semibold text-white/85 backdrop-blur-md transition-all duration-300 hover:border-white/40 hover:bg-white/[0.14] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60"
               >
-                Ver página del servicio →
+                {T.viewPage[lang]}
               </button>
             </div>
           </motion.div>
@@ -233,19 +248,19 @@ export function ServicesCarousel() {
         <button
           type="button"
           onClick={() => go(-1)}
-          aria-label="Servicio anterior"
+          aria-label={T.prev[lang]}
           className="btn-press glass-dark flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition-colors hover:text-white"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <div className="flex items-center gap-1.5" role="tablist" aria-label="Ir a servicio">
+        <div className="flex items-center gap-1.5" role="tablist" aria-label={T.goTo[lang]}>
           {SERVICES.map((s, i) => (
             <button
               key={s.id}
               type="button"
               role="tab"
               aria-selected={i === active}
-              aria-label={s.title}
+              aria-label={pick(s.title, lang)}
               onClick={() => setActive(i)}
               className="group relative h-2.5 py-2"
             >
@@ -263,7 +278,7 @@ export function ServicesCarousel() {
         <button
           type="button"
           onClick={() => go(1)}
-          aria-label="Servicio siguiente"
+          aria-label={T.next[lang]}
           className="btn-press glass-dark flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition-colors hover:text-white"
         >
           <ChevronRight className="h-5 w-5" />

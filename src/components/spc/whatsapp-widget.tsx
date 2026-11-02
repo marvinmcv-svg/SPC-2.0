@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { X, Send, ChevronRight } from "lucide-react";
 import { WhatsAppIcon } from "./whatsapp-button";
 import { SpcMark } from "./logo";
+import { useLang } from "./lang";
 import { SPC, waLink, WA_MESSAGES } from "@/lib/spc";
 
 /**
@@ -19,6 +20,36 @@ export function WhatsAppWidget() {
   const [bubbles, setBubbles] = useState<{ role: "user" | "spc"; text: string }[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const reduce = useReducedMotion();
+  const { lang } = useLang();
+
+  const T = {
+    chatAria: { es: "Chat de WhatsApp con SPC", en: "WhatsApp chat with SPC" },
+    online: { es: "En línea · típicamente responde en minutos", en: "Online · typically replies in minutes" },
+    closeChat: { es: "Cerrar chat", en: "Close chat" },
+    protected: { es: "🔒 Conversación protegida · continúa en WhatsApp", en: "🔒 Protected conversation · continues on WhatsApp" },
+    welcome: {
+      es: (<>¡Hola! 👋 Somos <strong>SPC Gráfica Industrial</strong>. ¿En qué podemos ayudarte hoy? Cuéntanos tu proyecto de impresión o packaging.</>),
+      en: (<>Hi! 👋 We are <strong>SPC Gráfica Industrial</strong>. How can we help you today? Tell us about your printing or packaging project.</>),
+    },
+    handoff: { es: "¡Perfecto! Te llevamos a WhatsApp para continuar con un asesor 👇", en: "Perfect! Taking you to WhatsApp to continue with an advisor 👇" },
+    quickReplies: {
+      es: [
+        { label: "Quiero cotizar packaging", msg: WA_MESSAGES.packaging },
+        { label: "Impresión digital", msg: WA_MESSAGES.digital },
+        { label: "Hablar con un asesor", msg: WA_MESSAGES.general },
+      ],
+      en: [
+        { label: "I want a packaging quote", msg: WA_MESSAGES.packaging },
+        { label: "Digital printing", msg: WA_MESSAGES.digital },
+        { label: "Talk to an advisor", msg: WA_MESSAGES.general },
+      ],
+    },
+    placeholder: { es: "Escribe tu mensaje…", en: "Type your message…" },
+    inputAria: { es: "Escribe tu mensaje para SPC", en: "Type your message for SPC" },
+    sendAria: { es: "Enviar por WhatsApp", en: "Send via WhatsApp" },
+    openAria: { es: "Abrir chat de WhatsApp", en: "Open WhatsApp chat" },
+    closeWa: { es: "Cerrar chat de WhatsApp", en: "Close WhatsApp chat" },
+  };
 
   // Pulso de atención suave a los 7s (una sola vez, respeta reduced-motion)
   useEffect(() => {
@@ -50,7 +81,7 @@ export function WhatsAppWidget() {
         ...b,
         {
           role: "spc",
-          text: "¡Perfecto! Te llevamos a WhatsApp para continuar con un asesor 👇",
+          text: T.handoff[lang],
         },
       ]);
     }, 550);
@@ -59,11 +90,7 @@ export function WhatsAppWidget() {
     setText("");
   }
 
-  const quickReplies = [
-    { label: "Quiero cotizar packaging", msg: WA_MESSAGES.packaging },
-    { label: "Impresión digital", msg: WA_MESSAGES.digital },
-    { label: "Hablar con un asesor", msg: WA_MESSAGES.general },
-  ];
+  const quickReplies = T.quickReplies[lang];
 
   return (
     <>
@@ -79,7 +106,7 @@ export function WhatsAppWidget() {
             style={{ transformOrigin: "bottom right" }}
             className="fixed bottom-[9.5rem] right-3 z-[60] flex w-[min(92vw,380px)] flex-col overflow-hidden rounded-[26px] border border-black/8 bg-white shadow-[0_40px_90px_-20px_rgba(10,20,40,0.5)] sm:bottom-[9.75rem] sm:right-6"
             role="dialog"
-            aria-label="Chat de WhatsApp con SPC"
+            aria-label={T.chatAria[lang]}
           >
             {/* Header verde oficial */}
             <div className="relative flex items-center gap-3 bg-gradient-to-b from-[#1DAB61] to-[#128C7E] px-4 py-3.5">
@@ -91,13 +118,13 @@ export function WhatsAppWidget() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[15px] font-bold text-white">{SPC.whatsapp.displayName}</p>
                 <p className="text-[12px] font-medium text-white/85">
-                  En línea · típicamente responde en minutos
+                  {T.online[lang]}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="Cerrar chat"
+                aria-label={T.closeChat[lang]}
                 className="btn-press flex h-9 w-9 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/15 hover:text-white"
               >
                 <X className="h-5 w-5" />
@@ -117,12 +144,9 @@ export function WhatsAppWidget() {
             >
               {/* mensaje de bienvenida */}
               <div className="mx-auto mb-1 max-w-[85%] rounded-xl bg-[#FFF3C4] px-3.5 py-2 text-center text-[11.5px] font-medium text-[#5C5326] shadow-sm">
-                🔒 Conversación protegida · continúa en WhatsApp
+                {T.protected[lang]}
               </div>
-              <Bubble role="spc">
-                ¡Hola! 👋 Somos <strong>SPC Gráfica Industrial</strong>. ¿En qué podemos ayudarte
-                hoy? Cuéntanos tu proyecto de impresión o packaging.
-              </Bubble>
+              <Bubble role="spc">{T.welcome[lang]}</Bubble>
 
               {/* historial de la sesión */}
               <AnimatePresence initial={false}>
@@ -174,13 +198,13 @@ export function WhatsAppWidget() {
                 type="text"
                 inputMode="text"
                 autoComplete="off"
-                placeholder="Escribe tu mensaje…"
-                aria-label="Escribe tu mensaje para SPC"
+                placeholder={T.placeholder[lang]}
+                aria-label={T.inputAria[lang]}
                 className="h-11 min-w-0 flex-1 rounded-full bg-[#F0F2F5] px-4.5 text-[14.5px] text-[#0C1526] outline-none ring-[#25D366]/50 transition-shadow placeholder:text-[#8A94A6] focus:ring-2"
               />
               <button
                 type="submit"
-                aria-label="Enviar por WhatsApp"
+                aria-label={T.sendAria[lang]}
                 className="btn-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#128C7E] text-white shadow-[0_6px_16px_-4px_rgba(18,140,126,0.5)] transition-colors hover:bg-[#25D366]"
               >
                 <Send className="h-4.5 w-4.5 -translate-x-[1px]" />
@@ -199,7 +223,7 @@ export function WhatsAppWidget() {
           setHint(false);
           if (next) window.dispatchEvent(new CustomEvent("widget:opened", { detail: "wa" }));
         }}
-        aria-label={open ? "Cerrar chat de WhatsApp" : "Abrir chat de WhatsApp"}
+        aria-label={open ? T.closeWa[lang] : T.openAria[lang]}
         aria-expanded={open}
         initial={{ scale: 0, rotate: -30 }}
         animate={{ scale: 1, rotate: 0 }}

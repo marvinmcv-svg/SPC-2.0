@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useMotionValueEvent, useScroll, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, ArrowUpRight } from "lucide-react";
+import { Menu, X, ChevronDown, ArrowUpRight, Languages } from "lucide-react";
 import { SpcLogo } from "./logo";
 import { WhatsAppButton } from "./whatsapp-button";
-import { SERVICES, WA_MESSAGES } from "@/lib/spc";
+import { SERVICES, WA_MESSAGES, pick } from "@/lib/spc";
+import { SHARED } from "@/lib/i18n";
+import { useLang } from "./lang";
 import { useRouter, type Route } from "./site-router";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +18,7 @@ export function Navbar() {
   const [svcOpen, setSvcOpen] = useState(false);
   const { route, navigate } = useRouter();
   const { scrollY } = useScroll();
+  const { lang, setLang } = useLang();
 
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 24));
 
@@ -37,12 +40,12 @@ export function Navbar() {
   }, [open]);
 
   const LINKS: { label: string; active: boolean; onClick: () => void }[] = [
-    { label: "Inicio", active: isHome, onClick: () => go({ name: "home" }) },
-    { label: "Nosotros", active: route.name === "about", onClick: () => go({ name: "about" }) },
-    { label: "Clientes", active: false, onClick: () => go({ name: "home" }, "clientes") },
-    { label: "Tecnología", active: false, onClick: () => go({ name: "home" }, "tecnologia") },
-    { label: "FAQ", active: false, onClick: () => go({ name: "home" }, "faq") },
-    { label: "Contacto", active: false, onClick: () => go({ name: "home" }, "contacto") },
+    { label: SHARED.nav.home[lang], active: isHome, onClick: () => go({ name: "home" }) },
+    { label: SHARED.nav.about[lang], active: route.name === "about", onClick: () => go({ name: "about" }) },
+    { label: SHARED.nav.clients[lang], active: false, onClick: () => go({ name: "home" }, "clientes") },
+    { label: SHARED.nav.technology[lang], active: false, onClick: () => go({ name: "home" }, "tecnologia") },
+    { label: SHARED.nav.faq[lang], active: false, onClick: () => go({ name: "home" }, "faq") },
+    { label: SHARED.nav.contact[lang], active: false, onClick: () => go({ name: "home" }, "contacto") },
   ];
 
   return (
@@ -53,7 +56,7 @@ export function Navbar() {
       className="fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 sm:px-5 sm:pt-4"
     >
       <nav
-        aria-label="Navegación principal"
+        aria-label={lang === "es" ? "Navegación principal" : "Main navigation"}
         className={cn(
           "flex w-full max-w-6xl items-center justify-between gap-3 rounded-full border px-4 py-2.5 transition-all duration-500 ease-out sm:px-5",
           scrolled || open
@@ -83,7 +86,7 @@ export function Navbar() {
               aria-expanded={svcOpen}
               className="btn-press group flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13.5px] font-medium text-white/75 transition-colors duration-200 hover:bg-white/10 hover:text-white"
             >
-              Servicios
+              {SHARED.nav.services[lang]}
               <ChevronDown
                 className={cn(
                   "h-3.5 w-3.5 transition-transform duration-300",
@@ -100,7 +103,7 @@ export function Navbar() {
                   transition={{ type: "spring", stiffness: 320, damping: 26 }}
                   onMouseEnter={() => setSvcOpen(true)}
                   onMouseLeave={() => setSvcOpen(false)}
-                  className="glass-dark absolute left-1/2 top-full z-50 mt-3 w-[320px] -translate-x-1/2 rounded-3xl border-white/10 p-2.5 shadow-2xl"
+                  className="glass-dark absolute left-1/2 top-full z-50 mt-3 max-h-[70vh] w-[320px] -translate-x-1/2 overflow-y-auto rounded-3xl border-white/10 p-2.5 shadow-2xl"
                 >
                   {SERVICES.map((s, i) => (
                     <motion.button
@@ -128,10 +131,10 @@ export function Navbar() {
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[13px] font-semibold text-white/90">
-                          {s.title}
+                          {pick(s.title, lang)}
                         </span>
                         <span className="block text-[10.5px] uppercase tracking-wide text-white/40">
-                          {s.categoryLabel}
+                          {pick(s.categoryLabel, lang)}
                         </span>
                       </span>
                       <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-white/30 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white" />
@@ -164,19 +167,51 @@ export function Navbar() {
           ))}
         </ul>
 
-        {/* CTA + toggle */}
+        {/* CTA + toggle de idioma */}
         <div className="flex items-center gap-2.5">
+          {/* ——— ES / EN toggle ——— */}
+          <div
+            role="group"
+            aria-label={lang === "es" ? "Cambiar idioma" : "Switch language"}
+            className="btn-press relative flex h-10 items-center rounded-full border border-white/15 bg-white/[0.08] p-1 backdrop-blur-md"
+          >
+            {(["es", "en"] as const).map((code) => {
+              const active = lang === code;
+              return (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => setLang(code)}
+                  aria-pressed={active}
+                  className={cn(
+                    "relative z-10 flex h-8 w-9 items-center justify-center rounded-full text-[11.5px] font-bold uppercase tracking-wide transition-colors duration-200",
+                    active ? "text-white" : "text-white/50 hover:text-white/85"
+                  )}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="lang-pill"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      className="absolute inset-0 rounded-full bg-gradient-to-b from-[#3F6CC0] to-[#27519B] shadow-[0_6px_16px_-6px_rgba(63,108,192,0.8)]"
+                    />
+                  )}
+                  <span className="relative">{code}</span>
+                </button>
+              );
+            })}
+            <Languages className="sr-only" aria-hidden />
+          </div>
           <div className="hidden sm:block">
             <WhatsAppButton message={WA_MESSAGES.general} size="sm" className="shadow-lg">
-              <span className="hidden md:inline">Cotiza aquí</span>
-              <span className="md:hidden">Cotizar</span>
+              <span className="hidden md:inline">{SHARED.cta.quote[lang]}</span>
+              <span className="md:hidden">{SHARED.cta.quoteShort[lang]}</span>
             </WhatsAppButton>
           </div>
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
-            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            aria-label={open ? SHARED.misc.closeMenu[lang] : SHARED.misc.openMenu[lang]}
             className="btn-press flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md lg:hidden"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -197,15 +232,15 @@ export function Navbar() {
           >
             <ul className="flex flex-col">
               <li className="px-2 pb-2 pt-1 text-[10.5px] font-bold uppercase tracking-[0.18em] text-white/40">
-                Navegación
+                {SHARED.nav.navigation[lang]}
               </li>
               {[
-                { label: "Inicio", onClick: () => go({ name: "home" }) },
-                { label: "Nosotros", onClick: () => go({ name: "about" }) },
-                { label: "Clientes", onClick: () => go({ name: "home" }, "clientes") },
-                { label: "Tecnología", onClick: () => go({ name: "home" }, "tecnologia") },
-                { label: "FAQ", onClick: () => go({ name: "home" }, "faq") },
-                { label: "Contacto", onClick: () => go({ name: "home" }, "contacto") },
+                { label: SHARED.nav.home[lang], onClick: () => go({ name: "home" }) },
+                { label: SHARED.nav.about[lang], onClick: () => go({ name: "about" }) },
+                { label: SHARED.nav.clients[lang], onClick: () => go({ name: "home" }, "clientes") },
+                { label: SHARED.nav.technology[lang], onClick: () => go({ name: "home" }, "tecnologia") },
+                { label: SHARED.nav.faq[lang], onClick: () => go({ name: "home" }, "faq") },
+                { label: SHARED.nav.contact[lang], onClick: () => go({ name: "home" }, "contacto") },
               ].map((l, i) => (
                 <motion.li
                   key={l.label}
@@ -225,7 +260,7 @@ export function Navbar() {
               ))}
 
               <li className="mt-3 px-2 pb-2 pt-2 text-[10.5px] font-bold uppercase tracking-[0.18em] text-white/40">
-                Los 9 servicios
+                {SHARED.nav.the9[lang]}
               </li>
               {SERVICES.map((s, i) => (
                 <motion.li
@@ -243,7 +278,7 @@ export function Navbar() {
                       <Image src={s.image} alt="" fill sizes="44px" className="object-cover" />
                     </span>
                     <span className="flex-1 truncate text-[14px] font-medium text-white/85">
-                      {s.title}
+                      {pick(s.title, lang)}
                     </span>
                     <ArrowUpRight className="h-4 w-4 shrink-0 text-white/30 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white" />
                   </button>
@@ -252,7 +287,7 @@ export function Navbar() {
             </ul>
             <div className="mt-3 px-1 pb-1 sm:hidden">
               <WhatsAppButton message={WA_MESSAGES.general} size="md" className="w-full">
-                Cotiza por WhatsApp
+                {SHARED.cta.quoteWa[lang]}
               </WhatsAppButton>
             </div>
           </motion.div>

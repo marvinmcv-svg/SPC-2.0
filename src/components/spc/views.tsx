@@ -4,6 +4,7 @@ import { Hero } from "./hero";
 import { Marquee } from "./marquee";
 import { About } from "./about";
 import { Services } from "./services";
+import { ProductGallery } from "./product-gallery";
 import { Industries } from "./industries";
 import { Technology } from "./technology";
 import { Clients } from "./clients";
@@ -24,6 +25,7 @@ function HomeView() {
       <Marquee />
       <About />
       <Services />
+      <ProductGallery />
       <Industries />
       <Technology />
       <Clients />
